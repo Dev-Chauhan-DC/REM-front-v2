@@ -1,0 +1,954 @@
+import {
+    View,
+    Text,
+    Image,
+    Pressable,
+    useWindowDimensions,
+    ScrollView,
+    StatusBar, Linking, SafeAreaView,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import theme from '../../theme';
+import LeftArrow from '../../assets/svgs/LeftArrow';
+import ShareIcon from '../../assets/svgs/ShareIcon';
+import Heart from '../../assets/svgs/Heart';
+import InfoCard from '../../components/InfoCard';
+import BuildUpAreaIcon from '../../assets/svgs/BuildUpAreaIcon';
+import CarpetAreaIcon from '../../assets/svgs/CarpetAreaIcon';
+import FacingIcon from '../../assets/svgs/FacingIcon';
+import FlooringIcon from '../../assets/svgs/FlooringIcon';
+import PropertyAgeIcon from '../../assets/svgs/PropertyAgeIcon';
+import FurnishingStatusIcon from '../../assets/svgs/FurnishingStatusIcon';
+import MaintenanceIcon from '../../assets/svgs/MaintenanceIcon';
+import FloorIcon from '../../assets/svgs/FloorIcon';
+import PowerBackupIcon from '../../assets/svgs/PowerBackupIcon';
+import WaterSupplyIcon from '../../assets/svgs/WaterSupplyIcon';
+import GatedSecurityIcon from '../../assets/svgs/GatedSecurityIcon';
+import KitchenTypeIcon from '../../assets/svgs/KitchenTypeIcon';
+import CupBoardsIcon from '../../assets/svgs/CupBoardsIcon';
+import PossessionIcon from '../../assets/svgs/PossessionIcon';
+import PropertyTypeIcon from '../../assets/svgs/PropertyTypeIcon';
+import DaysOnAppIcon from '../../assets/svgs/DaysOnAppIcon';
+import IconList from '../../components/IconList';
+import {useNavigation} from '@react-navigation/native';
+import ButtonComponent from '../../components/ButtonComponent';
+import OptionSelect from '../../components/OptionSelect';
+import StreetViewIcon from '../../assets/svgs/StreetViewIcon';
+import RightHalfArrow from '../../assets/svgs/RightHalfArrow';
+import apis from '../../apis/apis';
+import calculateDaysAgo from '../../utilities/calculateDaysAgo';
+import {formatPhoneNumber} from '../../utilities/formatPhoneNumber';
+import ActiveHeart from '../../assets/svgs/ActiveHeart';
+
+const PropertyInfo = ({route}) => {
+    const screenWidth = useWindowDimensions().width;
+    const [propertyInfo, setPropertyInfo] = useState({});
+    const [isPhoneShow, setIsPhoneShow] = useState(false);
+
+    const navigation = useNavigation();
+
+    const getPropertyData = async id => {
+        try {
+            const response = await apis.getPropertyById(id);
+            const data =
+                response && response.data && response.data.data
+                    ? response.data.data
+                    : {};
+            setPropertyInfo(data);
+        } catch (e) {
+            console.warn(e?.response?.data?.message || 'Something went wrong');
+        }
+    };
+
+    const savePropertyHandle = async () => {
+        try {
+            const response = await apis.saveProperty(propertyInfo.id);
+
+
+            let propertyInfoArray = {...propertyInfo};
+
+
+            if (propertyInfoArray && propertyInfoArray.saved_properties && propertyInfoArray.saved_properties.length === 0) {
+                propertyInfoArray.saved_properties.push('1');
+                setPropertyInfo(propertyInfoArray);
+            } else {
+                propertyInfoArray.saved_properties.length = 0;
+                setPropertyInfo(propertyInfoArray);
+            }
+
+
+        } catch (e) {
+            console.warn(e?.response?.data?.message || 'Something went wrong');
+        }
+    };
+
+    const showNumberClick = async () => {
+        try {
+            if(isPhoneShow) await Linking.openURL(`tel:${propertyInfo.user.phone_number}`);
+            setIsPhoneShow(true);
+            const data = {
+                propertyId: propertyInfo.id,
+            };
+            const response = await apis.createInterestedPerson(data);
+        } catch (e) {
+            console.warn(e?.response?.data?.message || 'Something went wrong');
+        }
+    };
+
+    useEffect(() => {
+        const propertyId = route.params.propertyId;
+        getPropertyData(propertyId);
+    }, [route]);
+
+    return (
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: "white"
+            }}
+        >
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: 'white',
+                }}>
+                <View
+                    style={{
+                        position: 'relative',
+                    }}>
+                    <Pressable
+                        onPress={() =>
+                            navigation.navigate('images', {
+                                imageArray: propertyInfo.property_photos,
+                            })
+                        }>
+                        <Image
+                            style={{
+                                height: 250,
+                                width: 'auto',
+                                objectFit: 'cover',
+                            }}
+                            source={
+                                propertyInfo.property_photos === undefined
+                                    ? require('../../assets/images/house.jpg')
+                                    : {uri: propertyInfo?.property_photos[0]?.photos}
+                            }
+                        />
+                    </Pressable>
+                    <Pressable
+                        onPress={() => navigation.goBack()}
+                        style={{
+                            width: 30,
+                            height: 30,
+                            borderRadius: 25,
+                            backgroundColor: 'white',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            position: 'absolute',
+                            top: 10,
+                            left: 10,
+                        }}>
+                        <LeftArrow
+                            style={{
+                                width: 18,
+                                height: 18,
+                                fill: theme.color.black,
+                            }}
+                        />
+                    </Pressable>
+                    <View
+                        style={{
+                            position: 'absolute',
+                            right: 10,
+                            top: 10,
+                            flexDirection: 'row',
+                            gap: 10,
+                        }}>
+                        <Pressable
+                            onPress={savePropertyHandle}
+                            style={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: 25,
+                                backgroundColor: 'white',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}>
+                            {propertyInfo.saved_properties !== undefined &&
+                            propertyInfo.saved_properties.length !== 0 ? (
+                                <ActiveHeart
+                                    style={{
+                                        width: 14,
+                                        height: 14,
+                                        fill: theme.color.black,
+                                    }}
+                                />
+                            ) : (
+                                <Heart
+                                    style={{
+                                        width: 14,
+                                        height: 14,
+                                        fill: theme.color.black,
+                                    }}
+                                />
+                            )}
+                        </Pressable>
+                    </View>
+                    <View
+                        style={{
+                            backgroundColor: '#000000b8',
+                            position: 'absolute',
+                            bottom: 10,
+                            right: 10,
+                            paddingHorizontal: 15,
+                            paddingVertical: 3,
+                            borderRadius: 5,
+                        }}>
+                        <Text
+                            style={{
+                                fontSize: 12,
+                                color: 'white',
+                                fontFamily: theme.font.medium,
+                            }}>
+                            1 /{' '}
+                            {propertyInfo.property_photos === undefined
+                                ? 0
+                                : propertyInfo.property_photos.length}
+                        </Text>
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        paddingHorizontal: theme.screen.horizontalPadding,
+                    }}>
+                    <Text
+                        style={{
+                            color: theme.color.black,
+                            fontFamily: theme.font.semiBold,
+                            fontSize: 18,
+                            marginTop: 14,
+                            marginBottom: 15,
+                        }}>
+                        ₹{propertyInfo.price ? propertyInfo.price.toLocaleString() : '0'}
+                    </Text>
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            color: theme.color.gray400,
+                            fontFamily: theme.font.medium,
+                            marginBottom: 15,
+                        }}>
+                        {propertyInfo.address}
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            marginBottom: 35,
+                        }}>
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                            }}>
+                            <Text
+                                style={{
+                                    fontFamily: theme.font.bold,
+                                }}>
+                                {propertyInfo.bedroom_count}
+                            </Text>{' '}
+                            bedroom
+                            <Text
+                                style={{
+                                    color: theme.color.gray200,
+                                }}>
+                                {' '}
+                                |{' '}
+                            </Text>
+                        </Text>
+                        {/*  */}
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                            }}>
+                            <Text
+                                style={{
+                                    fontFamily: theme.font.bold,
+                                }}>
+                                {propertyInfo.bathroom_count}
+                            </Text>{' '}
+                            bathroom
+                            <Text
+                                style={{
+                                    color: theme.color.gray200,
+                                }}>
+                                {' '}
+                                |{' '}
+                            </Text>
+                        </Text>
+                        {/*  */}
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                            }}>
+                            <Text
+                                style={{
+                                    fontFamily: theme.font.bold,
+                                }}>
+                                {propertyInfo.hall_count}
+                            </Text>{' '}
+                            hall
+                            <Text
+                                style={{
+                                    color: theme.color.gray200,
+                                }}>
+                                {' '}
+                                |{' '}
+                            </Text>
+                        </Text>
+                        {/*  */}
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                            }}>
+                            <Text
+                                style={{
+                                    fontFamily: theme.font.bold,
+                                }}>
+                                {propertyInfo.kitchen_count}
+                            </Text>{' '}
+                            kitchen
+                            <Text
+                                style={{
+                                    color: theme.color.gray200,
+                                }}>
+                                {' '}
+                                |{' '}
+                            </Text>
+                        </Text>
+                        {/*  */}
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                            }}>
+                            <Text
+                                style={{
+                                    fontFamily: theme.font.bold,
+                                }}>
+                                {propertyInfo.balcony_count}
+                            </Text>{' '}
+                            balcony
+                        </Text>
+                        {/*  */}
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        marginHorizontal: 15,
+                        flexWrap: 'wrap',
+                    }}>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Build up area'}
+                            value={`${
+                                propertyInfo.built_up_area
+                                    ? propertyInfo.built_up_area.toLocaleString()
+                                    : '0'
+                            } sq ft`}
+                            icon={<BuildUpAreaIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Carpet area'}
+                            value={`${
+                                propertyInfo.carpet_area
+                                    ? propertyInfo.carpet_area.toLocaleString()
+                                    : '0'
+                            } sq ft`}
+                            icon={<CarpetAreaIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Furnishing status'}
+                            value={
+                                propertyInfo.furnishing
+                                    ? propertyInfo.furnishing.furnishing
+                                    : 'null'
+                            }
+                            icon={<FurnishingStatusIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Facing'}
+                            value={propertyInfo.facing ? propertyInfo.facing.facing : 'null'}
+                            icon={<FacingIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Flooring'}
+                            value={
+                                propertyInfo.flooring_type
+                                    ? propertyInfo.flooring_type.flooring_type
+                                    : 'null'
+                            }
+                            icon={<FlooringIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Property age'}
+                            value={`${
+                                propertyInfo.property_age ? propertyInfo.property_age : 'null'
+                            } Years`}
+                            icon={<PropertyAgeIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Maintenance'}
+                            value={`₹${
+                                propertyInfo.maintenance
+                                    ? propertyInfo.maintenance.toLocaleString()
+                                    : 'null'
+                            } / Month`}
+                            icon={<MaintenanceIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Ownership type'}
+                            value={
+                                propertyInfo.ownership_type
+                                    ? propertyInfo.ownership_type.ownership_type
+                                    : 'null'
+                            }
+                            icon={<FloorIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Power Backup'}
+                            value={
+                                propertyInfo.power_backup
+                                    ? propertyInfo.power_backup.power_backup
+                                    : 'null'
+                            }
+                            icon={<PowerBackupIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Water Supply'}
+                            value={
+                                propertyInfo.water_supply
+                                    ? propertyInfo.water_supply.water_supply
+                                    : 'null'
+                            }
+                            icon={<WaterSupplyIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Gated Security'}
+                            value={propertyInfo.gated_security ? 'Yes' : 'No'}
+                            icon={<GatedSecurityIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Kitchen Type'}
+                            value={
+                                propertyInfo.kitchen_type
+                                    ? propertyInfo.kitchen_type.kitchen_type
+                                    : 'null'
+                            }
+                            icon={<KitchenTypeIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Cupboards'}
+                            value={propertyInfo.cupboard ? propertyInfo.cupboard : '0'}
+                            icon={<CupBoardsIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Propery type'}
+                            value={
+                                propertyInfo.home_type
+                                    ? propertyInfo.home_type.home_type
+                                    : 'null'
+                            }
+                            icon={<PropertyTypeIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Days on app'}
+                            value={
+                                propertyInfo.createdAt
+                                    ? calculateDaysAgo(propertyInfo.createdAt)
+                                    : 'null'
+                            }
+                            icon={<DaysOnAppIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            width: '50%',
+                        }}>
+                        <InfoCard
+                            property={'Possession'}
+                            value={
+                                propertyInfo.possession
+                                    ? propertyInfo.possession.possession
+                                    : 'null'
+                            }
+                            icon={<PossessionIcon/>}
+                            style={{
+                                margin: 5,
+                            }}
+                        />
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        paddingHorizontal: theme.screen.horizontalPadding,
+                        marginTop: 80,
+                    }}>
+                    <Text
+                        style={{
+                            color: theme.color.black,
+                            fontFamily: theme.font.semiBold,
+                            fontSize: 18,
+                            marginBottom: 25,
+                        }}>
+                        Amenities
+                    </Text>
+                    <View
+                        style={{
+                            gap: 20,
+                        }}>
+                        {propertyInfo.property_amenities &&
+                        propertyInfo.property_amenities.length !== 0 ? (
+                            propertyInfo.property_amenities.map((i, index) => {
+                                return (
+                                    <IconList
+                                        key={index}
+                                        icon={i.amenity.amenitie}
+                                        text={i.amenity.amenitie}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <Text
+                                style={{
+                                    color: theme.color.black,
+                                    fontSize: 14,
+                                    fontFamily: theme.font.medium,
+                                }}>
+                                No Amenities
+                            </Text>
+                        )}
+                    </View>
+                    {/* <ButtonComponent
+                        title={`show all ${propertyInfo.property_amenities ? propertyInfo.property_amenities.length : "0"} amenities`}
+                        titleStyle={{
+                            color: theme.color.black,
+                            fontSize: 14,
+                            fontFamily: theme.font.medium
+                        }}
+                        style={{
+                            backgroundColor: "white",
+                            borderColor: theme.color.black,
+                            borderWidth: 1,
+                            height: 44,
+                            marginTop: 25
+                        }}
+                    /> */}
+                </View>
+
+                {/*  Near by start*/}
+                {/*<View*/}
+                {/*  style={{*/}
+                {/*    paddingHorizontal: theme.screen.horizontalPadding,*/}
+                {/*    marginTop: 80,*/}
+                {/*  }}>*/}
+                {/*  <Text*/}
+                {/*    style={{*/}
+                {/*      color: theme.color.black,*/}
+                {/*      fontFamily: theme.font.semiBold,*/}
+                {/*      fontSize: 18,*/}
+                {/*      marginBottom: 25,*/}
+                {/*    }}>*/}
+                {/*    Nearby*/}
+                {/*  </Text>*/}
+                {/*  <View>*/}
+                {/*    <View*/}
+                {/*      style={{*/}
+                {/*        borderRadius: 50,*/}
+                {/*        overflow: 'hidden',*/}
+                {/*        marginBottom: 20,*/}
+                {/*      }}>*/}
+                {/*      <ScrollView*/}
+                {/*        horizontal={true}*/}
+                {/*        showsHorizontalScrollIndicator={false}>*/}
+                {/*        <OptionSelect*/}
+                {/*          selectedOption={(i, index) => console.warn(i, index)}*/}
+                {/*          options={[*/}
+                {/*            'school',*/}
+                {/*            'hospital',*/}
+                {/*            'buses',*/}
+                {/*            'railway',*/}
+                {/*            'movie theater',*/}
+                {/*            'shopping mall',*/}
+                {/*            'pharmacy',*/}
+                {/*          ]}*/}
+                {/*          selectedOptionBackground={theme.color.black}*/}
+                {/*          optionContainerStyle={{*/}
+                {/*            gap: 7,*/}
+                {/*          }}*/}
+                {/*          optionStyle={{*/}
+                {/*            borderRadius: 50,*/}
+                {/*            paddingHorizontal: 30,*/}
+                {/*          }}*/}
+                {/*          textStyle={{*/}
+                {/*            fontSize: 14,*/}
+                {/*          }}*/}
+                {/*        />*/}
+                {/*      </ScrollView>*/}
+                {/*    </View>*/}
+                {/*    <View*/}
+                {/*      style={{*/}
+                {/*        borderWidth: 1,*/}
+                {/*        borderRadius: 5,*/}
+                {/*        borderColor: theme.color.gray100,*/}
+                {/*        padding: 15,*/}
+                {/*        gap: 20,*/}
+                {/*      }}>*/}
+                {/*      <View*/}
+                {/*        style={{*/}
+                {/*          flexDirection: 'row',*/}
+                {/*          width: '100%',*/}
+                {/*        }}>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            fontFamily: theme.font.medium,*/}
+                {/*            color: theme.color.black,*/}
+                {/*            fontSize: 14,*/}
+                {/*            width: '60%',*/}
+                {/*            textAlign: 'left',*/}
+                {/*          }}>*/}
+                {/*          Bhatiya Hospital*/}
+                {/*        </Text>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            fontFamily: theme.font.semiBold,*/}
+                {/*            color: theme.color.black,*/}
+                {/*            fontSize: 12,*/}
+                {/*            width: '40%',*/}
+                {/*            textAlign: 'right',*/}
+                {/*          }}>*/}
+                {/*          2.6 km | 11 mins*/}
+                {/*        </Text>*/}
+                {/*      </View>*/}
+
+                {/*      <View*/}
+                {/*        style={{*/}
+                {/*          flexDirection: 'row',*/}
+                {/*          width: '100%',*/}
+                {/*        }}>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            fontFamily: theme.font.medium,*/}
+                {/*            color: theme.color.black,*/}
+                {/*            fontSize: 14,*/}
+                {/*            width: '60%',*/}
+                {/*            textAlign: 'left',*/}
+                {/*          }}>*/}
+                {/*          Jaslok Hospital and Research center*/}
+                {/*        </Text>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            fontFamily: theme.font.semiBold,*/}
+                {/*            color: theme.color.black,*/}
+                {/*            fontSize: 12,*/}
+                {/*            width: '40%',*/}
+                {/*            textAlign: 'right',*/}
+                {/*          }}>*/}
+                {/*          2.6 km | 11 mins*/}
+                {/*        </Text>*/}
+                {/*      </View>*/}
+
+                {/*      <View*/}
+                {/*        style={{*/}
+                {/*          flexDirection: 'row',*/}
+                {/*          width: '100%',*/}
+                {/*        }}>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            fontFamily: theme.font.medium,*/}
+                {/*            color: theme.color.black,*/}
+                {/*            fontSize: 14,*/}
+                {/*            width: '60%',*/}
+                {/*            textAlign: 'left',*/}
+                {/*          }}>*/}
+                {/*          Breach Candy Hospital Trust*/}
+                {/*        </Text>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            fontFamily: theme.font.semiBold,*/}
+                {/*            color: theme.color.black,*/}
+                {/*            fontSize: 12,*/}
+                {/*            width: '40%',*/}
+                {/*            textAlign: 'right',*/}
+                {/*          }}>*/}
+                {/*          2.6 km | 11 mins*/}
+                {/*        </Text>*/}
+                {/*      </View>*/}
+                {/*    </View>*/}
+                {/*  </View>*/}
+                {/*</View>*/}
+
+                {/*  Near by end*/}
+
+
+                {/*  Street view start*/}
+
+                {/*<View*/}
+                {/*  style={{*/}
+                {/*    paddingHorizontal: theme.screen.horizontalPadding,*/}
+                {/*    marginTop: 80,*/}
+                {/*  }}>*/}
+                {/*  <Text*/}
+                {/*    style={{*/}
+                {/*      color: theme.color.black,*/}
+                {/*      fontFamily: theme.font.semiBold,*/}
+                {/*      fontSize: 18,*/}
+                {/*      marginBottom: 25,*/}
+                {/*    }}>*/}
+                {/*    Street view*/}
+                {/*  </Text>*/}
+
+                {/*  <Pressable*/}
+                {/*    style={{*/}
+                {/*      backgroundColor: theme.color.gray100,*/}
+                {/*      alignSelf: 'flex-start',*/}
+                {/*      height: 60,*/}
+                {/*      width: 60,*/}
+                {/*      borderRadius: 60,*/}
+                {/*      alignItems: 'center',*/}
+                {/*      justifyContent: 'center',*/}
+                {/*    }}>*/}
+                {/*    <StreetViewIcon*/}
+                {/*      style={{*/}
+                {/*        width: 30,*/}
+                {/*        height: 30,*/}
+                {/*        fill: theme.color.black,*/}
+                {/*      }}*/}
+                {/*    />*/}
+                {/*  </Pressable>*/}
+                {/*</View>*/}
+
+
+                {/*  Street view end*/}
+
+                <View
+                    style={{
+                        paddingHorizontal: theme.screen.horizontalPadding,
+                        marginTop: 80,
+                        paddingBottom: 20,
+                    }}>
+                    <Text
+                        style={{
+                            color: theme.color.black,
+                            fontFamily: theme.font.semiBold,
+                            fontSize: 18,
+                            marginBottom: 25,
+                        }}>
+                        Description from owner
+                    </Text>
+                    <Text
+                        style={{
+                            color: theme.color.black,
+                            marginBottom: 20,
+                            fontFamily: theme.font.regular,
+                            textTransform: 'capitalize',
+                        }}>
+                        {propertyInfo.property_description
+                            ? propertyInfo.property_description
+                            : 'null'}
+                    </Text>
+                    {/* <Pressable
+                        style={{
+                            backgroundColor: theme.color.gray100,
+                            borderRadius: 5,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 3,
+                            alignSelf: "flex-start",
+                            height: 30,
+                            paddingHorizontal: 15
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: theme.color.black,
+                                fontFamily: theme.font.semiBold,
+                                marginBottom: 2
+                            }}
+                        >Show more</Text>
+                        <RightHalfArrow
+                            style={{
+                                width: 16,
+                                height: 16,
+                                fill: theme.color.black
+                            }} />
+                    </Pressable> */}
+                </View>
+
+                <View
+                    style={{
+                        paddingHorizontal: theme.screen.horizontalPadding,
+                        marginTop: 80,
+                        paddingBottom: 20,
+                    }}>
+                    <ButtonComponent
+                        onPress={showNumberClick}
+                        title={
+                            isPhoneShow
+                                ? propertyInfo.user
+                                    ? formatPhoneNumber(
+                                        '+91' + ' ' + propertyInfo.user.phone_number,
+                                    )
+                                    : 'null'
+                                : 'Get a Number'
+                        }
+                        titleStyle={{
+                            fontFamily: theme.font.semiBold,
+                            color: 'white',
+                        }}
+                        style={{
+                            backgroundColor: theme.color.black,
+                        }}
+                    />
+                </View>
+            </View>
+            <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+        </ScrollView>
+        </SafeAreaView>
+    );
+};
+
+export default PropertyInfo;
