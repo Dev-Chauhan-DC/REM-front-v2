@@ -54,16 +54,17 @@ const MapViewScreen = ({latitude, longitude, onMarkerPressHandle}) => {
     }, [filterString, southwestLng]);
 
 
+
     return (
         <View>
             <MapView
                 provider={PROVIDER_GOOGLE}
                 style={{height: '100%'}}
                 region={{
-                    latitude: latitude,
-                    longitude: longitude,
-                    latitudeDelta: northeastLat - southwestLat,
-                    longitudeDelta: northeastLng - southwestLng,
+                    latitude: (northeastLat + southwestLat) / 2,
+                    longitude: (northeastLng + southwestLng) / 2,
+                    latitudeDelta: Math.abs(northeastLat - southwestLat),
+                    longitudeDelta: Math.abs(northeastLng - southwestLng),
                 }}
             >
                 {

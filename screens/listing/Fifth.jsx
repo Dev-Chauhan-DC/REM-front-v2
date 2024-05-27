@@ -40,6 +40,7 @@ import {
 } from '../../atoms/listing/fourth';
 import {imageCompress} from '../../utilities/imageCompress';
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {imageFilesState, imagesState} from "../../atoms/listing/fifth";
 
 const Fifth = () => {
     const insets = useSafeAreaInsets();
@@ -50,8 +51,10 @@ const Fifth = () => {
     const screenHeight = useWindowDimensions().height;
 
     const [stepsBottomHeight, setStepsBottomHeight] = useState(0);
-    const [images, setImages] = useState([]);
-    const [imagesFileId, setImagesFileId] = useState([]);
+    // const [images, setImages] = useState([]);
+    const [images, setImages] = useRecoilState(imagesState);
+    // const [imagesFileId, setImagesFileId] = useState([]);
+    const [imagesFileId, setImagesFileId] = useRecoilState(imageFilesState);
     const gap = 10;
     const [uploadLoading, setUploadLoading] = useState(false);
     const [error, setError] = useState('');
@@ -107,7 +110,7 @@ const Fifth = () => {
     const onSubmitHandle = async () => {
 
 
-        if (imagesFileId < 2) {
+        if (imagesFileId.length < 2) {
             setError('Please select at least two photos');
             return;
         }
@@ -194,11 +197,9 @@ const Fifth = () => {
                 navigation.navigate('profile');
             }
         } catch (e) {
-
-
             Alert.alert(
-                'Error',
-                e?.response?.data?.message || 'Something went wrong',
+                e?.response?.data?.message || 'Error',
+                e?.response?.data?.data?.[0]?.msg || 'Something went wrong',
                 [
                     {
                         text: 'OK',
@@ -255,7 +256,9 @@ const Fifth = () => {
                     setImagesFileId([createFileRes.data.data.id, ...imagesFileId]);
                 }
 
-                setImages([imageUrl, ...images]);
+                const readFile = await apis.readFileByFileId(createFileRes.data.data.id);
+
+                setImages([readFile.data.data, ...images]);
 
             }
 
@@ -280,6 +283,12 @@ const Fifth = () => {
         let array = [...images];
         array.splice(index, 1);
         setImages(array);
+
+        let arr2 = [...imagesFileId];
+        arr2.splice(index, 1);
+        setImagesFileId(arr2);
+
+
     };
 
 

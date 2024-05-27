@@ -42,17 +42,17 @@ export const balconyCountState = atom({
 
 export const builtUpAreaState = atom({
     key: 'builtUpArea',
-    default: '',
+    default: '0',
 });
 
 export const carpetAreaState = atom({
     key: 'carpetArea',
-    default: '',
+    default: '0',
 });
 
 export const plotAreaState = atom({
     key: 'plotArea',
-    default: '',
+    default: '0',
 });
 
 export const facingState = atom({
@@ -62,17 +62,17 @@ export const facingState = atom({
 
 export const propertyAgeState = atom({
     key: 'propertyAge',
-    default: '',
+    default: '0',
 });
 
 export const totalFloorState = atom({
     key: 'totalFloor',
-    default: '',
+    default: '0',
 });
 
 export const propertyFloorState = atom({
     key: 'propertyFloor',
-    default: '',
+    default: '0',
 });
 
 export const flooringTypeState = atom({

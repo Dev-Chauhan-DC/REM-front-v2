@@ -2,7 +2,7 @@ import {atom} from 'recoil';
 
 export const expectedPriceState = atom({
     key: 'expectedPrice',
-    default: "",
+    default: "0",
 });
 
 export const priceNagotiableState = atom({

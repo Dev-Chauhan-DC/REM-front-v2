@@ -1,5 +1,5 @@
 import {View, Text, Pressable, TextInput, useWindowDimensions, StatusBar, SafeAreaView} from 'react-native';
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import LeftArrow from '../../assets/svgs/LeftArrow'
 import SearchIcon from '../../assets/svgs/SearchIcon'
 import theme from '../../theme'
@@ -74,6 +74,7 @@ const Search = () => {
 
         navigation.navigate("home")
     }
+
 
     return (
         <SafeAreaView

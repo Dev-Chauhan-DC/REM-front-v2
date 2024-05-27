@@ -17,6 +17,7 @@ import {
     priceNagotiableState, propertyDescriptionState, totalFlatsInBuildingState,
 } from '../../atoms/listing/third';
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {houseTypeState, purposeState} from "../../atoms/listing/first";
 
 const Third = () => {
     const insets = useSafeAreaInsets();
@@ -54,6 +55,9 @@ const Third = () => {
     const [possessionStatus, setPossessionStatus] = useRecoilState(possessionStatusState);
     const [totalFlatsInBuilding, setTotalFlatsInBuilding] = useRecoilState(totalFlatsInBuildingState);
     const [preferredTenants, setPreferredTenants] = useRecoilState(preferredTenantsState);
+    //dependency
+    const [purpose, setPurpose] = useRecoilState(purposeState);
+    const [houseType, setHouseType] = useRecoilState(houseTypeState);
 
 
     const priceHandle = i => setExpectedPrice(i);
@@ -161,12 +165,18 @@ const Third = () => {
             totalValidation--
         }
 
-        if (isNaN(totalFlatsInBuilding) || Number(totalFlatsInBuilding) < 1) {
-            setTotalFlatError('Please enter total flats in building');
+        if (houseType === 1 || houseType === 3) {
+            if (isNaN(totalFlatsInBuilding) || Number(totalFlatsInBuilding) < 1) {
+                setTotalFlatError('Please enter total flats in building');
+            } else {
+                setTotalFlatError('');
+                totalValidation--
+            }
         } else {
             setTotalFlatError('');
             totalValidation--
         }
+
 
         if (!preferredTenants) {
             setTenantError('Please select preferred tenant');
@@ -218,7 +228,7 @@ const Third = () => {
                                 error={priceError}
                                 value={expectedPrice}
                                 showPlayButton={false}
-                                placeholder={'Expected price*'}
+                                placeholder={`Expected ${purpose === 1 ? "Price" : "Rent"}*`}
                                 keyboardType={'numeric'}
                                 onChangeText={priceHandle}
                             />
@@ -237,6 +247,9 @@ const Third = () => {
                                 keyboardType={'numeric'}
                             />
                             <CheckBoxWithTitle
+                                style={{
+                                    display: purpose === 2 ? "none" : "",
+                                }}
                                 initCheck={isUnderLoan}
                                 checkStatus={currentlyUnderLoanHandle}
                                 title={'Currently under loan'}
@@ -350,6 +363,9 @@ const Third = () => {
 
 
                             <OptionSelect
+                                style={{
+                                    display: purpose === 2 ? "none" : ""
+                                }}
                                 error={possessionStatusError}
                                 initiallySelected={possessionStatus - 1}
                                 showPlayButton={false}
@@ -363,6 +379,9 @@ const Third = () => {
 
                             />
                             <Input
+                                style={{
+                                    display: houseType === 2 || houseType === 4 ? "none" : ""
+                                }}
                                 error={totalFlatError}
                                 value={totalFlatsInBuilding}
                                 showPlayButton={false}
@@ -371,6 +390,9 @@ const Third = () => {
                                 keyboardType={'numeric'}
                             />
                             <OptionSelect
+                                style={{
+                                    display: purpose === 1 ? "none" : "",
+                                }}
                                 error={tenantError}
                                 initiallySelected={preferredTenants - 1}
                                 showPlayButton={false}

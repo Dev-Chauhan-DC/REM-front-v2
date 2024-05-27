@@ -1,5 +1,5 @@
 import {View, useWindowDimensions, ScrollView, SafeAreaView, Platform} from 'react-native'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import theme from '../../theme'
 import SelectToggle from '../../components/SelectToggle'
 import ApartmentIcon from '../../assets/svgs/ApartmentIcon'
@@ -97,6 +97,9 @@ const Filter = ({route, onCancelPress, onFilterApply}) => {
         possessionsId,
         tenantsId
     }
+
+
+
 
 
     const filtersHandle = () => {

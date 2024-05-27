@@ -177,13 +177,18 @@ const First = () => {
             setInitCarpetError('');
             totalValidation--
         }
-
-        if (!plotArea || isNaN(plotArea) || Number(plotArea) < 100) {
-            setInitPlotAreaError('Invalid Plot Up Area');
+        if ((houseType === 2) || houseType === 4) {
+            if (!plotArea || isNaN(plotArea) || Number(plotArea) < 100) {
+                setInitPlotAreaError('Invalid Plot Up Area');
+            } else {
+                setInitPlotAreaError('');
+                totalValidation--
+            }
         } else {
             setInitPlotAreaError('');
             totalValidation--
         }
+
 
         if (!facing) {
             setInitFacingError('Please Select Facing');
@@ -206,9 +211,14 @@ const First = () => {
             totalValidation--
         }
 
-        if (!propertyFloor || isNaN(propertyFloor) || parseInt(propertyFloor) < 0) {
-            setInitPropFloorError('Invalid Property Floor');
-        } else {
+        if (houseType === 1 || houseType === 3) {
+            if (!propertyFloor || isNaN(propertyFloor) || parseInt(propertyFloor) < 0) {
+                setInitPropFloorError('Invalid Property Floor');
+            } else {
+                setInitPropFloorError('');
+                totalValidation--
+            }
+        }else{
             setInitPropFloorError('');
             totalValidation--
         }
@@ -394,6 +404,9 @@ const First = () => {
                                 keyboardType={'numeric'}
                             />
                             <Input
+                                style={{
+                                    display: houseType === 1 || houseType == 3 ? "none" : ""
+                                }}
                                 error={initPlotAreaError}
                                 value={plotArea}
                                 showPlayButton={false}
@@ -434,6 +447,9 @@ const First = () => {
                             />
                             {/* <ProgressBar title={"Property floors"} showPlayButton={false} onPlayClick={() => console.warn("click")} /> */}
                             <Input
+                                style={{
+                                    display: houseType === 2 || houseType == 4 ? "none" : ""
+                                }}
                                 error={initPropFloorError}
                                 value={propertyFloor}
                                 onChangeText={propertyFloorHandle}
@@ -455,6 +471,9 @@ const First = () => {
 
                             />
                             <OptionSelect
+                                style={{
+                                    display: purpose === 2 ? "none" : ""
+                                }}
                                 error={initOwnershipError}
                                 initiallySelected={ownership - 1}
                                 showPlayButton={false}

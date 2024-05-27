@@ -1,4 +1,4 @@
-import {StatusBar, Text, View, SafeAreaView, Pressable, Alert, Platform} from 'react-native';
+import {StatusBar, Text, View, SafeAreaView, Pressable, Alert, Platform, Linking} from 'react-native';
 import React, {useState} from 'react';
 import Input from '../../components/Input';
 import ButtonComponent from '../../components/ButtonComponent';
@@ -55,7 +55,6 @@ const LoginScreen = () => {
     };
 
 
-
     return (
         <SafeAreaView
             style={{
@@ -93,6 +92,28 @@ const LoginScreen = () => {
                             isLoading={sendOtpLoading}
                             onPress={sendOtpHandle}
                             title={'Send OTP'}/>
+                        <Text
+                            style={{
+                                color: theme.color.black,
+                                fontFamily: theme.font.regular,
+                                marginTop: 20
+                            }}
+                        >By continuing, you agree to the
+                            <Text
+                                onPress={() => Linking.openURL('https://real-estate-properties.s3.us-east-2.amazonaws.com/REM/TermsofService_REM_.html')}
+                                style={{
+                                    color: theme.color.primary,
+                                    fontFamily: theme.font.semiBold
+                                }}
+                            > Terms of Services</Text> and
+                            <Text
+                                onPress={() => Linking.openURL('https://real-estate-properties.s3.us-east-2.amazonaws.com/REM/Privacypolicy_REM_.html')}
+                                style={{
+                                    color: theme.color.primary,
+                                    fontFamily: theme.font.semiBold
+                                }}
+                            > Privacy Policy</Text>.
+                        </Text>
                     </View>
                     <View
                         style={{

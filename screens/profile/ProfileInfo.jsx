@@ -61,7 +61,7 @@ const ProfileInfo = () => {
             fetchUser();
             setLoading(false);
         } catch (e) {
-            ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
+            ToastAndroid.show(e?.response?.data?.data?.[0]?.msg || 'Something went wrong', ToastAndroid.SHORT);
         }
     };
 

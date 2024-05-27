@@ -297,26 +297,26 @@ const Like = () => {
                                         }
                                         ShowLikeButton={true}
                                         images={
-                                            i.property.property_photos[0] &&
-                                            i.property.property_photos[0].photos
+                                            i?.property?.property_photos[0] &&
+                                            i?.property?.property_photos[0]?.photos
                                                 ? i.property.property_photos[0].photos
                                                 : null
                                         }
-                                        days={`${calculateDaysAgo(i.property.createdAt)}`}
+                                        days={`${calculateDaysAgo(i?.property?.createdAt || 0)}`}
                                         listedBy={i?.user?.user_role?.role || 0}
-                                        address={i.property.address}
-                                        sqft={i.property.built_up_area}
-                                        kitchen={i.property.kitchen_count}
-                                        hall={i.property.hall_count}
-                                        bath={i.property.bathroom_count}
-                                        price={i.property.price}
-                                        bad={i.property.bedroom_count}
+                                        address={i?.property?.address || ""}
+                                        sqft={i?.property?.built_up_area || ""}
+                                        kitchen={i?.property?.kitchen_count || ""}
+                                        hall={i?.property?.hall_count || ""}
+                                        bath={i?.property?.bathroom_count || ""}
+                                        price={i?.property?.price || ""}
+                                        bad={i?.property?.bedroom_count || ""}
                                         key={index}
                                         style={{marginBottom: 20}}
                                         showCompare={isActiveCompare}
-                                        onComparePress={() => compareHandle(i.property.id)}
+                                        onComparePress={() => compareHandle(i?.property?.id || "")}
                                         compareArray={comparePropertiesId}
-                                        propertyId={i.property.id}
+                                        propertyId={i?.property?.id || ""}
                                     />
                                 );
                             })

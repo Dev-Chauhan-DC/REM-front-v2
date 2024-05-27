@@ -1,10 +1,12 @@
 import {Platform, Pressable, StyleSheet, Text, TextInput, View} from 'react-native'
-import React, { useState } from 'react'
+import React, {useState} from 'react'
 import theme from '../theme'
 import LocationIcon from '../assets/svgs/LocationIcon'
 import googleApis from '../apis/googleApis'
+import {debounce} from 'lodash';
 
-const SearchWithSuggestions = ({ searchResult }) => {
+
+const SearchWithSuggestions = ({searchResult}) => {
 
     const [suggestions, setSuggestions] = useState([])
     const [isSuggestion, setIsSuggestion] = useState(false)
@@ -14,12 +16,18 @@ const SearchWithSuggestions = ({ searchResult }) => {
 
     const searchHandle = async (i) => {
         setInputValue(i)
-        const response = await googleApis.googlePlaceAutoComplateApi(i)
 
-        if (response && response.data && response.data.predictions) {
-            setSuggestions(response.data.predictions)
-            setIsSuggestion(true)
-        }
+
+        const debouncedFunction = debounce(async () => {
+
+            const response = await googleApis.googlePlaceAutoComplateApi(i);
+            if (response && response.data && response.data.predictions) {
+                setSuggestions(response.data.predictions);
+                setIsSuggestion(true);
+            }
+        }, 500);
+
+        debouncedFunction();
 
     }
 
@@ -29,14 +37,12 @@ const SearchWithSuggestions = ({ searchResult }) => {
         const response = await googleApis.googlePlaceDetails(placeId)
 
 
-
-
         const data = {
             location: response.data.result.geometry.location,
             viewport: response.data.result.geometry.viewport,
             address: response.data.result.formatted_address,
         }
-        searchResult ? searchResult(data) : null
+        searchResult ? searchResult(data) : null;
 
         setIsSuggestion(false)
         setInputValue(data.address)
@@ -58,8 +64,7 @@ const SearchWithSuggestions = ({ searchResult }) => {
                 }}
             >
                 <TextInput
-                cursorColor={theme.color.primary}
-                onBlur={()=>setIsSuggestion(false)}
+                    cursorColor={theme.color.primary}
                     value={inputValue}
                     onChangeText={searchHandle}
                     placeholderTextColor={theme.color.gray300}
@@ -88,8 +93,6 @@ const SearchWithSuggestions = ({ searchResult }) => {
                                 <Pressable
                                     onPress={() => seledtedSuggestionHandle(index)}
                                     key={index}
-                                    style={{
-                                    }}
                                 >
                                     <View
                                         style={{
@@ -143,7 +146,6 @@ const SearchWithSuggestions = ({ searchResult }) => {
                             )
                         })
                     }
-
 
 
                 </View>

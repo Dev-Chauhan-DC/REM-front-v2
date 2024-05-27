@@ -1,19 +1,16 @@
-import { View, Text, Pressable } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import {View, Text, Pressable} from 'react-native'
+import React, {useState, useEffect} from 'react'
 import CheckIcon from '../assets/svgs/CheckIcon'
 import theme from '../theme'
 import PlayIcon from '../assets/svgs/PlayIcon'
 
-const CheckBoxWithTitle = ({ title, checkStatus, showPlayButton, onPlayClick, initCheck }) => {
+const CheckBoxWithTitle = ({title, checkStatus, showPlayButton, onPlayClick, initCheck, style}) => {
     const [isCheck, setIsCheck] = useState(false)
 
 
-
-
-
-    useEffect(()=>{
+    useEffect(() => {
         setIsCheck(initCheck ? initCheck : false)
-    },[initCheck])
+    }, [initCheck])
 
 
     const pressHandle = () => {
@@ -23,18 +20,18 @@ const CheckBoxWithTitle = ({ title, checkStatus, showPlayButton, onPlayClick, in
     }
 
 
-
     return (
         <View
             style={{
                 flexDirection: "row",
                 gap: 12,
-                alignItems: "center"
+                alignItems: "center",
+                ...style
             }}
         >
             <Pressable
-                onPress={ () => {
-                    
+                onPress={() => {
+
                     pressHandle()
                 }}
                 style={{
@@ -53,17 +50,17 @@ const CheckBoxWithTitle = ({ title, checkStatus, showPlayButton, onPlayClick, in
                         justifyContent: "center"
                     }}
                 >{
-                        isCheck ?
-                            <CheckIcon
-                                style={{
-                                    width: 12,
-                                    height: 12,
-                                    fill: "white"
-                                }}
-                            />
-                            :
-                            <></>
-                    }
+                    isCheck ?
+                        <CheckIcon
+                            style={{
+                                width: 12,
+                                height: 12,
+                                fill: "white"
+                            }}
+                        />
+                        :
+                        <></>
+                }
 
                 </View>
                 <Text

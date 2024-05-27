@@ -17,7 +17,6 @@ import {useNavigation} from '@react-navigation/native';
 import BottomSheet from '../../components/BottomSheet';
 import PhoneIcon from '../../assets/svgs/PhoneIcon';
 import apis from '../../apis/apis';
-import {useFocusEffect} from '@react-navigation/native';
 import calculateDaysAgo from '../../utilities/calculateDaysAgo';
 import {formatPhoneNumber} from '../../utilities/formatPhoneNumber';
 import LoadingCard from '../../components/LoadingCard';
@@ -26,7 +25,6 @@ import {useRecoilState} from 'recoil';
 import {userState} from '../../atoms/profile/user';
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {debounce} from "lodash";
-import queryString from "../../utilities/queryString/queryString";
 
 const Profile = () => {
     const insets = useSafeAreaInsets();
@@ -75,6 +73,7 @@ const Profile = () => {
 
         }
     };
+
     const debouncedFunction = debounce(()=>{
         setPage(page + 1);
         const newStr = qs.set(query, 'page', page + 1);
@@ -151,7 +150,6 @@ const Profile = () => {
         return false;
     };
 
-
     useEffect(() => {
         getUserProperties();
         fetchUser();
@@ -166,7 +164,6 @@ const Profile = () => {
 
         return () => backHandler.remove();
     }, [interestedPeopleSheet]);
-
 
     return (
         <SafeAreaView
@@ -203,20 +200,7 @@ const Profile = () => {
                             alignItems: 'center',
                             gap: 10,
                         }}>
-                        {/*<Image*/}
-                        {/*  source={{*/}
-                        {/*    uri: `${*/}
-                        {/*      user && user.avatar ? user.avatar : 'https://picsum.photos/200'*/}
-                        {/*    }`,*/}
-                        {/*  }}*/}
-                        {/*  style={{*/}
-                        {/*    width: 55,*/}
-                        {/*    height: 55,*/}
-                        {/*    borderRadius: 50,*/}
-                        {/*    borderWidth: 1,*/}
-                        {/*    borderColor: 'white',*/}
-                        {/*  }}*/}
-                        {/*/>*/}
+
                         <View
                             style={{
                                 gap: 2,

@@ -1,5 +1,5 @@
 import {View, Text, StatusBar, ScrollView, SafeAreaView} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import theme from '../../theme';
 import StepsBottom from '../../components/StepsBottom';
 import {useNavigation} from '@react-navigation/native';
@@ -7,7 +7,6 @@ import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import SearchWithSuggestions from '../../components/SearchWithSuggestions';
 import {useRecoilState} from 'recoil';
 import {mapRegionState, regionState} from '../../atoms/listing/second';
-import {debounce} from 'lodash';
 
 
 const Second = () => {
@@ -17,9 +16,6 @@ const Second = () => {
     const [mapRegion, setMapRegion] = useRecoilState(mapRegionState);
     const [error, setError] = useState('');
 
-    const debouncedHandleRegionChange = debounce((newRegion) => {
-        setMapRegion(newRegion);
-    }, 200);
 
     const handleMapPress = async (event) => {
         const {latitude, longitude} = event.nativeEvent.coordinate;
@@ -30,11 +26,8 @@ const Second = () => {
         });
     };
 
-    const handleRegionChange = (i) => {
-        debouncedHandleRegionChange(i);
-    };
-
     const searchResultHandle = async (data) => {
+
 
         setMapRegion({
             latitude: data.location.lat,
@@ -44,6 +37,7 @@ const Second = () => {
         });
 
     };
+
 
     const nextButtonHandle = async () => {
 
@@ -115,9 +109,7 @@ const Second = () => {
                                         borderRadius: 5,
                                     }}
                                     region={mapRegion}
-                                    initialRegion={region}
                                     onPress={handleMapPress}
-                                    onRegionChange={handleRegionChange}
                                 >
                                     <Marker coordinate={{latitude: region.latitude, longitude: region.longitude}}/>
 

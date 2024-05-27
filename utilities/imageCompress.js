@@ -15,4 +15,5 @@ export const imageCompress = async (absolutePath) => {
         console.error('Error converting image to base64:', error);
     }
 
+
 }

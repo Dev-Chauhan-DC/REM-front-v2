@@ -3,7 +3,7 @@ import axios from 'axios';
 import {Buffer} from 'buffer';
 
 // const baseUrl = 'https://www.screentimes.in';
-const baseUrl = 'http://172.16.20.8:3000';
+const baseUrl = 'http://192.168.1.170:3000';
 
 const auth = async phone => {
   try {
@@ -465,6 +465,23 @@ const createPropertyPhotoFiles = async (data) => {
     }
 };
 
+const readFileByFileId = async (fileId) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.post(
+            `${baseUrl}/file/read`, {fileId}, {
+                headers: {
+                    Authorization: token,
+                },
+            },
+        );
+
+        return response;
+    } catch (e) {
+        throw e;
+    }
+};
+
 export default {
     auth,
     sendOtp,
@@ -492,5 +509,6 @@ export default {
     createSubscription,
     createFile,
     createPropertyPhotoFiles,
+    readFileByFileId
 
 };
