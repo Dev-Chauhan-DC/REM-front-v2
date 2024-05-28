@@ -6,7 +6,7 @@ import BuildUpAreaIcon from '../assets/svgs/BuildUpAreaIcon'
 const InfoCard = ({ style, icon, property, value }) => {
 
 
-   
+
     return (
         <View
             style={{
@@ -25,7 +25,7 @@ const InfoCard = ({ style, icon, property, value }) => {
             >
 
                 {icon ?
-                
+
                     React.cloneElement(icon, {
                         style: {
                             width: 20,
@@ -55,7 +55,8 @@ const InfoCard = ({ style, icon, property, value }) => {
                         style={{
                             fontSize: 12,
                             fontFamily: theme.font.medium,
-                            color: theme.color.gray400
+                            color: theme.color.gray400,
+                            textTransform: "capitalize"
                         }}
                     >{property}</Text>
                 </View>

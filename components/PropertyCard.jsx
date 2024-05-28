@@ -1,5 +1,5 @@
-import { View, Text, Pressable, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import {View, Text, Pressable, Image} from 'react-native'
+import React, {useEffect, useState} from 'react'
 import theme from '../theme'
 import Heart from '../assets/svgs/Heart'
 import ActiveHeart from '../assets/svgs/ActiveHeart'
@@ -7,12 +7,13 @@ import DeleteIcon from '../assets/svgs/DeleteIcon'
 import EditIcon from '../assets/svgs/EditIcon'
 import CheckIcon from '../assets/svgs/CheckIcon'
 
-const PropertyCard = ({ style, isLikeActive,
-    onPress, showCompare, ShowCloseButton, showEditButton,
-    ShowLikeButton, showInterestedPeopleButton,
-    onInterestedPeoplePress, price, bad, bath, hall, kitchen, sqft, address, listedBy,
-    days, onPressDelete, images, onHeartClick, onComparePress, compareArray, propertyId
-}) => {
+const PropertyCard = ({
+                          style, isLikeActive,
+                          onPress, showCompare, ShowCloseButton, showEditButton,
+                          ShowLikeButton, showInterestedPeopleButton,
+                          onInterestedPeoplePress, price, bad, bath, hall, kitchen, sqft, address, listedBy,
+                          days, onPressDelete, images, onHeartClick, onComparePress, compareArray, propertyId
+                      }) => {
     const [isCompare, setIsCompare] = useState(false)
 
 
@@ -21,7 +22,7 @@ const PropertyCard = ({ style, isLikeActive,
             if (propertyId) {
                 if (compareArray.includes(propertyId)) {
                     setIsCompare(true)
-                }else{
+                } else {
                     setIsCompare(false)
                 }
             }
@@ -43,12 +44,13 @@ const PropertyCard = ({ style, isLikeActive,
                 }}
             >
                 <Image
-                    source={images ? { uri: images } : require("../assets/images/house.jpg")}
+                    source={images ? {uri: images} : require("../assets/images/house.jpg")}
                     style={{
                         height: 250,
                         width: "100%",
                         objectFit: "cover",
-                        borderRadius: 10
+                        borderRadius: 10,
+                        backgroundColor: theme.color.gray200
                     }}
                 />
                 {
@@ -154,7 +156,11 @@ const PropertyCard = ({ style, isLikeActive,
                         fontFamily: theme.font.semiBold,
                         fontSize: 18
                     }}
-                >₹{price ? price.toLocaleString() : "Null"}</Text>
+                >{price ? price.toLocaleString('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    minimumFractionDigits: 0
+                }) : "Null"}</Text>
                 <View style={{
                     flexDirection: "row"
                 }}>
@@ -258,9 +264,6 @@ const PropertyCard = ({ style, isLikeActive,
             </View>
 
 
-
-
-
             {/* buttons */}
             <Pressable
                 style={{
@@ -316,7 +319,7 @@ const PropertyCard = ({ style, isLikeActive,
                                     width: 14,
                                     height: 14,
                                     fill: theme.color.black
-                                }} />
+                                }}/>
                         </Pressable>
                         :
                         <></>
@@ -341,7 +344,7 @@ const PropertyCard = ({ style, isLikeActive,
                                     width: 14,
                                     height: 14,
                                     fill: theme.color.black
-                                }} />
+                                }}/>
                             <Text
                                 style={{
                                     color: theme.color.black,
@@ -383,7 +386,7 @@ const PropertyCard = ({ style, isLikeActive,
                                             width: 14,
                                             height: 14,
                                             fill: theme.color.black
-                                        }} />
+                                        }}/>
                             }
 
                         </Pressable>
@@ -394,7 +397,6 @@ const PropertyCard = ({ style, isLikeActive,
             </View>
 
             <></>
-
 
 
         </Pressable>
