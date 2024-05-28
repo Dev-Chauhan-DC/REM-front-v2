@@ -220,8 +220,9 @@ const Profile = () => {
                                     fontSize: 12,
                                     color: theme.color.gray300,
                                     fontFamily: theme.font.semiBold,
+                                    textTransform: "capitalize"
                                 }}>
-                                View profile
+                                {user?.user_role?.role || ""}
                             </Text>
                         </View>
                     </View>

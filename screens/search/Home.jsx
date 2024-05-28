@@ -5,7 +5,7 @@ import {
     StatusBar,
     ActivityIndicator,
     ToastAndroid,
-    BackHandler, Dimensions, Platform,
+    BackHandler, Platform,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import SearchHeader from '../../components/SearchHeader';
