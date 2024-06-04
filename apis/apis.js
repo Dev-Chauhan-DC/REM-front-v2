@@ -3,7 +3,7 @@ import axios from 'axios';
 import {Buffer} from 'buffer';
 
 // const baseUrl = 'https://www.screentimes.in';
-const baseUrl = 'http://192.168.1.28:3000';
+const baseUrl = 'http://172.16.20.18:3000';
 
 const auth = async phone => {
   try {

@@ -1,5 +1,5 @@
-import {View, Text, ToastAndroid} from 'react-native';
-import React, {useEffect} from 'react';
+import {View, Text, ToastAndroid, ActivityIndicator} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import theme from '../../theme';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import formatPropertyPrice from '../../utilities/formatPropertyPrice';
@@ -14,11 +14,9 @@ import {
     southwestLngState,
 } from '../../atoms/search';
 import queryString from '../../utilities/queryString/queryString';
-import {useNavigation} from '@react-navigation/native';
 
 
-const MapViewScreen = ({latitude, longitude, onMarkerPressHandle}) => {
-    const navigation = useNavigation();
+const MapViewScreen = ({onMarkerPressHandle}) => {
 
     const [northeastLat, setNortheastLat] = useRecoilState(northeastLatState);
     const [southwestLat, setSouthwestLat] = useRecoilState(southwestLatState);
@@ -26,9 +24,11 @@ const MapViewScreen = ({latitude, longitude, onMarkerPressHandle}) => {
     const [southwestLng, setSouthwestLng] = useRecoilState(southwestLngState);
     const [filterString, setFilterString] = useRecoilState(filterStringState);
     const [mapProperties, setMapProperties] = useRecoilState(mapPropertiesState);
+    const [apiCallLoading, setApiCallLoading] = useState(false)
 
     const mapSearchHandle = async () => {
         try {
+            setApiCallLoading(true)
 
             const newFilterString = queryString.set(filterString, 'view', 'map');
 
@@ -43,16 +43,19 @@ const MapViewScreen = ({latitude, longitude, onMarkerPressHandle}) => {
             const response = await apis.getSearchResults(data);
 
             setMapProperties(response?.data?.data);
+            setApiCallLoading(false)
 
         } catch (e) {
+            setApiCallLoading(false)
             ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
+
         }
     };
+
 
     useEffect(() => {
         mapSearchHandle();
     }, [filterString, southwestLng]);
-
 
 
     return (
@@ -101,7 +104,25 @@ const MapViewScreen = ({latitude, longitude, onMarkerPressHandle}) => {
                 }
             </MapView>
 
+            {
+                apiCallLoading ?
+                    <ActivityIndicator
+                        color={theme.color.primary}
+                        style={{
 
+                            position: 'absolute',
+                            zIndex: 10000,
+                            bottom: 0,
+                            right: 0,
+                            backgroundColor: 'white',
+                            margin: 20,
+                            padding: 5,
+                            borderRadius: 50,
+                        }}
+                    />
+                    :
+                    <></>
+            }
 
         </View>
 

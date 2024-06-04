@@ -248,23 +248,6 @@ const Home = () => {
                         }}>
                         {currentView === 'map' ? (
                             <View>
-                                {isLoading ? (
-                                    <ActivityIndicator
-                                        color={theme.color.primary}
-                                        style={{
-                                            position: 'absolute',
-                                            zIndex: 10000,
-                                            top: 0,
-                                            left: 0,
-                                            backgroundColor: '#ffffffb8',
-                                            margin: 20,
-                                            padding: 5,
-                                            borderRadius: 50,
-                                        }}
-                                    />
-                                ) : (
-                                    <></>
-                                )}
                                 <MapViewScreen
                                     latitude={latitude}
                                     longitude={longitude}

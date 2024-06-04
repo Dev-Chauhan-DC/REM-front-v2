@@ -31,14 +31,11 @@ const ListView = ({
 
                   }) => {
     const [iconButtonHeight, setIconButtonHeight] = useState(0);
-    const [loadingCardArrray, setLoadingCardArrray] = useState([
-        0, 0, 0, 0, 0, 0,
-    ]);
 
     const insets = useSafeAreaInsets();
     const safeRemovedTotalHeightIos = Platform.OS === "ios" ? insets.top + insets.bottom : 0;
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [apiCallLoading, setApiCallLoading] = useState(false);
     const [page, setPage] = useRecoilState(pageState);
 
     const [northeastLat, setNortheastLat] = useRecoilState(northeastLatState);
@@ -89,6 +86,8 @@ const ListView = ({
 
     const listSearchHandle = async () => {
         try {
+            setApiCallLoading(true)
+
 
             let data = {
                 swlat: southwestLat,
@@ -102,8 +101,11 @@ const ListView = ({
 
             setProperties([...properties, ...response?.data?.data]);
 
+            setApiCallLoading(false)
+
 
         } catch (e) {
+            setApiCallLoading(false)
             ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
 
         }
@@ -145,8 +147,8 @@ const ListView = ({
                 <ScrollView
                     onScroll={handleScroll}
                     showsVerticalScrollIndicator={false}>
-                    {isLoading ? (
-                        loadingCardArrray.map((i, index) => {
+                    {apiCallLoading ? (
+                        [0,0,0,0,0].map((i, index) => {
                             return (
                                 <LoadingCard
                                     style={{
@@ -190,18 +192,16 @@ const ListView = ({
                             );
                         })
                     ) : (
-                        <>
-                            <LoadingCard
-                                style={{
-                                    marginBottom: 20,
-                                }}
-                            />
-                            <LoadingCard
-                                style={{
-                                    marginBottom: 20,
-                                }}
-                            />
-                        </>
+                        <Text
+                            style={{
+                                color: theme.color.black,
+                                textTransform: "capitalize",
+                                fontFamily: theme.font.semiBold,
+
+                            }}
+                        >
+                           no property found
+                        </Text>
 
                     )}
                 </ScrollView>
