@@ -3,7 +3,7 @@ import axios from 'axios';
 import {Buffer} from 'buffer';
 
 // const baseUrl = 'https://www.screentimes.in';
-const baseUrl = 'http://172.16.20.18:3000';
+const baseUrl = 'http://172.16.20.6:3000';
 
 const auth = async phone => {
   try {
@@ -57,6 +57,7 @@ const sendOtp = async (phone) => {
         const response = await axios.post(`${baseUrl}/auth/send-otp`, data);
         return response;
     }catch (e) {
+        console.log(e)
         throw e;
     }
 }

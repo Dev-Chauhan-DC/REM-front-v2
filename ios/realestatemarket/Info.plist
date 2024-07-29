@@ -32,7 +32,9 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>We need location because user can search property according to latitude and longitude</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+      <string>We need access to your photo library to upload images for house photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Black.ttf</string>

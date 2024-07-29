@@ -35,7 +35,7 @@ const ListView = ({
     const insets = useSafeAreaInsets();
     const safeRemovedTotalHeightIos = Platform.OS === "ios" ? insets.top + insets.bottom : 0;
 
-    const [apiCallLoading, setApiCallLoading] = useState(false);
+    // const [apiCallLoading, setApiCallLoading] = useState(false);
     const [page, setPage] = useRecoilState(pageState);
 
     const [northeastLat, setNortheastLat] = useRecoilState(northeastLatState);
@@ -44,6 +44,9 @@ const ListView = ({
     const [southwestLng, setSouthwestLng] = useRecoilState(southwestLngState);
     const [filterString, setFilterString] = useRecoilState(filterStringState);
     const [properties, setProperties] = useRecoilState(propertiesState);
+
+    const [propertyCount, setPropertyCount] = useState(3)
+    const loadingCardArray = [0, 0, 0, 0, 0, 0];
 
 
     const navigation = useNavigation();
@@ -86,7 +89,6 @@ const ListView = ({
 
     const listSearchHandle = async () => {
         try {
-            setApiCallLoading(true)
 
 
             let data = {
@@ -101,11 +103,11 @@ const ListView = ({
 
             setProperties([...properties, ...response?.data?.data]);
 
-            setApiCallLoading(false)
+            setPropertyCount(response?.data?.data?.length);
+            console.log("running..23")
 
 
         } catch (e) {
-            setApiCallLoading(false)
             ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
 
         }
@@ -113,7 +115,6 @@ const ListView = ({
 
 
     useEffect(() => {
-
         listSearchHandle();
     }, [filterString, southwestLng]);
 
@@ -147,20 +148,7 @@ const ListView = ({
                 <ScrollView
                     onScroll={handleScroll}
                     showsVerticalScrollIndicator={false}>
-                    {apiCallLoading ? (
-                        [0,0,0,0,0].map((i, index) => {
-                            return (
-                                <LoadingCard
-                                    style={{
-                                        marginBottom: 20,
-                                    }}
-                                    key={index}
-                                />
-                            );
-                        })
-                    ) : (
-                        <></>
-                    )}
+
                     {properties && properties.length !== 0 ? (
                         properties.map((i, index) => {
                             let isSaved = false;
@@ -192,17 +180,16 @@ const ListView = ({
                             );
                         })
                     ) : (
-                        <Text
-                            style={{
-                                color: theme.color.black,
-                                textTransform: "capitalize",
-                                fontFamily: theme.font.semiBold,
-
-                            }}
-                        >
-                           no property found
-                        </Text>
-
+                        loadingCardArray.map((i, index) => {
+                            return (
+                                <LoadingCard
+                                    style={{
+                                        marginBottom: 20,
+                                    }}
+                                    key={index}
+                                />
+                            );
+                        })
                     )}
                 </ScrollView>
             </View>
