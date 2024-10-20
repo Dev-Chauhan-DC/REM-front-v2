@@ -1,24 +1,31 @@
-import {View, Text, useWindowDimensions, Pressable} from 'react-native'
-import React, {useEffect} from 'react'
+import { View, Text, useWindowDimensions, Pressable } from 'react-native'
+import React, { useEffect } from 'react'
 import Search from '../assets/svgs/SearchIcon'
 import Heart from '../assets/svgs/Heart'
 import Person from '../assets/svgs/Person'
 import ActiveSearch from '../assets/svgs/ActiveSearch'
 import ActiveHeart from '../assets/svgs/ActiveHeart'
 import ActivePerson from '../assets/svgs/ActivePerson'
-import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native'
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native'
 import theme from '../theme'
+import { useRecoilState } from 'recoil'
+import { userState } from '../atoms/profile/user'
+import LoginIcon from '../assets/svgs/LoginIcon'
+import { loginShowState } from '../atoms/login'
 
-const TebNavigation = ({onLayout, style}) => {
+const TebNavigation = ({ onLayout, style }) => {
 
     const screenWidth = useWindowDimensions().width
     const navigation = useNavigation()
     const currentScreenName = useRoute().name
 
+    const [user, setUser] = useRecoilState(userState);
+    const [loginModal, setLoginModal] = useRecoilState(loginShowState)
+
 
     return (
         <View
-            onLayout={({nativeEvent}) => onLayout ? onLayout(nativeEvent) : null}
+            onLayout={({ nativeEvent }) => onLayout ? onLayout(nativeEvent) : null}
             style={{
                 position: "absolute",
                 bottom: 0,
@@ -51,7 +58,7 @@ const TebNavigation = ({onLayout, style}) => {
                                 width: 20,
                                 height: 20,
                                 fill: theme.color.black
-                            }}/>
+                            }} />
                         </View>
                         :
                         <View style={{
@@ -66,7 +73,7 @@ const TebNavigation = ({onLayout, style}) => {
                                 width: 20,
                                 height: 20,
                                 fill: theme.color.black
-                            }}/>
+                            }} />
                         </View>
                 }
 
@@ -74,7 +81,15 @@ const TebNavigation = ({onLayout, style}) => {
 
 
             <Pressable
-                onPress={() => navigation.navigate("like")}
+                onPress={() => {
+                    if (user) {
+                        navigation.navigate("like");
+                        return;
+                    }
+                    setLoginModal(true);
+
+
+                }}
             >
                 {
                     currentScreenName === "like"
@@ -92,7 +107,7 @@ const TebNavigation = ({onLayout, style}) => {
                                 width: 20,
                                 height: 20,
                                 fill: theme.color.black
-                            }}/>
+                            }} />
                         </View>
                         :
                         <View style={{
@@ -107,32 +122,55 @@ const TebNavigation = ({onLayout, style}) => {
                                 width: 20,
                                 height: 20,
                                 fill: theme.color.black
-                            }}/>
+                            }} />
                         </View>
                 }
 
             </Pressable>
-            <Pressable
-                onPress={() => navigation.navigate("profile")}
-            >
-                {
-                    currentScreenName === "profile"
-                        ? <View style={{
-                            width: screenWidth / 3,
-                            backgroundColor: "white",
-                            height: "100%",
-                            alignItems: "center",
-                            justifyContent: "center"
 
-                        }}>
-                            <ActivePerson style={{
-                                width: 20,
-                                height: 20,
-                                fill: theme.color.black
-                            }}/>
-                        </View>
 
-                        :
+
+            {
+                user ? <Pressable
+                    onPress={() => navigation.navigate("profile")}
+                >
+                    {
+                        currentScreenName === "profile"
+                            ? <View style={{
+                                width: screenWidth / 3,
+                                backgroundColor: "white",
+                                height: "100%",
+                                alignItems: "center",
+                                justifyContent: "center"
+
+                            }}>
+                                <ActivePerson style={{
+                                    width: 20,
+                                    height: 20,
+                                    fill: theme.color.black
+                                }} />
+                            </View>
+
+                            :
+                            <View style={{
+                                width: screenWidth / 3,
+                                backgroundColor: "white",
+                                height: "100%",
+                                alignItems: "center",
+                                justifyContent: "center"
+
+                            }}>
+                                <Person style={{
+                                    width: 20,
+                                    height: 20,
+                                    fill: theme.color.black
+                                }} />
+                            </View>
+                    }
+                </Pressable> :
+                    <Pressable
+                        onPress={() => setLoginModal(true)}
+                    >
                         <View style={{
                             width: screenWidth / 3,
                             backgroundColor: "white",
@@ -141,14 +179,15 @@ const TebNavigation = ({onLayout, style}) => {
                             justifyContent: "center"
 
                         }}>
-                            <Person style={{
+                            <LoginIcon style={{
                                 width: 20,
                                 height: 20,
                                 fill: theme.color.black
-                            }}/>
+                            }} />
                         </View>
-                }
-            </Pressable>
+                    </Pressable>
+            }
+
 
         </View>
     )

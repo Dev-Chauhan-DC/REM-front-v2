@@ -8,14 +8,14 @@ import {
     SafeAreaView,
     ToastAndroid, ActivityIndicator
 } from 'react-native';
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import LeftArrow from '../../assets/svgs/LeftArrow'
 import SearchIcon from '../../assets/svgs/SearchIcon'
 import theme from '../../theme'
 import LocationIcon from '../../assets/svgs/LocationIcon'
-import {useNavigation} from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import googleApis from '../../apis/googleApis'
-import {useRecoilState} from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
     filterStringState,
     latitudeState, longitudeState,
@@ -25,6 +25,7 @@ import {
     southwestLngState,
 } from '../../atoms/search';
 import queryString from '../../utilities/queryString/queryString';
+import { debounce } from 'lodash'
 
 
 const Search = () => {
@@ -44,6 +45,7 @@ const Search = () => {
     const [filterString, setFilterString] = useRecoilState(filterStringState);
     const [apiCallLoading, setApiCallLoading] = useState(false)
 
+
     const searchHandle = async (i) => {
         const response = await googleApis.googlePlaceAutoComplateApi(i)
 
@@ -51,8 +53,9 @@ const Search = () => {
             setSuggestions(response.data.predictions)
         }
 
-
     }
+
+    const debouncedGetPrediction = useCallback(debounce(searchHandle, 500), []);
 
     const selectedSuggestionHandle = async (index) => {
 
@@ -139,7 +142,7 @@ const Search = () => {
                         />
                     </Pressable>
                     <TextInput
-                        onChangeText={searchHandle}
+                        onChangeText={debouncedGetPrediction}
                         placeholder='Search city or area'
                         placeholderTextColor={theme.color.gray400}
                         cursorColor={theme.color.gray300}
@@ -164,7 +167,7 @@ const Search = () => {
                                     width: 17,
                                     height: 17,
                                     fill: theme.color.black
-                                }}/> :
+                                }} /> :
                                 <ActivityIndicator
                                     color={theme.color.black}
                                     style={{
@@ -249,7 +252,7 @@ const Search = () => {
                                             style={{
                                                 width: 23,
                                                 height: 23,
-                                                transform: [{rotate: '33deg'}],
+                                                transform: [{ rotate: '33deg' }],
                                                 fill: theme.color.black,
                                             }}
                                         />
@@ -272,7 +275,7 @@ const Search = () => {
 
 
                 </View>
-                <StatusBar backgroundColor={"white"} barStyle={'dark-content'}/>
+                <StatusBar backgroundColor={"white"} barStyle={'dark-content'} />
             </View>
         </SafeAreaView>
     )

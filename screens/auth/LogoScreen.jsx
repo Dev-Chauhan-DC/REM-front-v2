@@ -5,18 +5,18 @@ import LogoSvg from '../../assets/svgs/LogoSvg'
 const LogoScreen = () => {
   return (
     <View
-        style={{
-            flex: 1,
-            backgroundColor: "white",
-            alignItems: "center",
-            justifyContent: "center"
-        }}
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+        alignItems: "center",
+        justifyContent: "center"
+      }}
     >
-      <LogoSvg/>
+      <LogoSvg />
 
 
 
-      <StatusBar backgroundColor={"white"} barStyle={'dark-content'}/>
+      <StatusBar backgroundColor={"white"} barStyle={'dark-content'} />
     </View>
   )
 }

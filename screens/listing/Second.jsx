@@ -1,12 +1,12 @@
-import {View, Text, StatusBar, ScrollView, SafeAreaView} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { View, Text, StatusBar, ScrollView, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme';
 import StepsBottom from '../../components/StepsBottom';
-import {useNavigation} from '@react-navigation/native';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import { useNavigation } from '@react-navigation/native';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import SearchWithSuggestions from '../../components/SearchWithSuggestions';
-import {useRecoilState} from 'recoil';
-import {mapRegionState, regionState} from '../../atoms/listing/second';
+import { useRecoilState } from 'recoil';
+import { mapRegionState, regionState } from '../../atoms/listing/second';
 
 
 const Second = () => {
@@ -18,7 +18,7 @@ const Second = () => {
 
 
     const handleMapPress = async (event) => {
-        const {latitude, longitude} = event.nativeEvent.coordinate;
+        const { latitude, longitude } = event.nativeEvent.coordinate;
         setRegion({
             ...region,
             latitude,
@@ -111,12 +111,22 @@ const Second = () => {
                                     region={mapRegion}
                                     onPress={handleMapPress}
                                 >
-                                    <Marker coordinate={{latitude: region.latitude, longitude: region.longitude}}/>
+                                    <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
 
                                 </MapView>
                             </View>
 
                         </View>
+                        <Text
+                            style={{
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                                fontSize: 14,
+                                marginBottom: 0,
+                                marginTop: 10,
+
+                            }}
+                        >Pin Property Location on Map *</Text>
                         <Text
                             style={{
                                 color: theme.color.primary,
@@ -168,7 +178,7 @@ const Second = () => {
                     stepCount={5}
                     currentStep={2}
                 />
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
             </View>
         </SafeAreaView>
     );

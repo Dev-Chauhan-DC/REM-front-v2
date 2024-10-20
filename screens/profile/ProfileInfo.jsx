@@ -1,5 +1,5 @@
-import {View, Text, ScrollView, Pressable, StatusBar, ToastAndroid, SafeAreaView} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { View, Text, ScrollView, Pressable, StatusBar, ToastAndroid, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme';
 import Input from '../../components/Input';
 import ButtonComponent from '../../components/ButtonComponent';
@@ -7,8 +7,9 @@ import BackBar from '../../components/BackBar';
 import apis from '../../apis/apis';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart';
-import {useRecoilState} from 'recoil';
-import {userState} from '../../atoms/profile/user';
+import { useRecoilState } from 'recoil';
+import { userState } from '../../atoms/profile/user';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileInfo = () => {
     const [firstName, setFirstName] = useState(' ');
@@ -21,6 +22,7 @@ const ProfileInfo = () => {
     const [companyName, setCompanyName] = useState(' ');
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useRecoilState(userState);
+    const navigation = useNavigation();
 
 
     const fetchUser = async () => {
@@ -40,7 +42,8 @@ const ProfileInfo = () => {
 
     const LogoutHandle = async () => {
         await AsyncStorage.setItem('token', '');
-        RNRestart.Restart();
+        setUser(null);
+        navigation.navigate('home')
     };
 
     const updateHandle = async () => {
@@ -57,9 +60,11 @@ const ProfileInfo = () => {
                 avatar: 'https://picsum.photos/id/237/200/300',
             };
 
-            const response = await apis.updateProfileInfo(data);
+            await apis.updateProfileInfo(data);
             fetchUser();
             setLoading(false);
+            ToastAndroid.show('Profile Updated', ToastAndroid.SHORT);
+
         } catch (e) {
             ToastAndroid.show(e?.response?.data?.data?.[0]?.msg || 'Something went wrong', ToastAndroid.SHORT);
         }
@@ -90,7 +95,7 @@ const ProfileInfo = () => {
                     paddingTop: theme.screen.paddingTop,
                 }}>
                 <ScrollView>
-                    <BackBar/>
+                    <BackBar />
 
                     <Text
                         style={{
@@ -120,7 +125,7 @@ const ProfileInfo = () => {
                             }}
                             placeholder={'Last name'}
                         />
-                        <Input value={phoneNumber} placeholder={'Phone'}/>
+                        <Input value={phoneNumber} placeholder={'Phone'} />
                         <Input
                             keyboardType={'email-address'}
                             value={email}
@@ -181,7 +186,7 @@ const ProfileInfo = () => {
                         </Pressable>
                     </View>
                 </ScrollView>
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
 
             </View>
         </SafeAreaView>

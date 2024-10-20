@@ -1,12 +1,12 @@
-import {Platform, Pressable, StyleSheet, Text, TextInput, View} from 'react-native'
-import React, {useState} from 'react'
+import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { useState, useCallback } from 'react'
 import theme from '../theme'
 import LocationIcon from '../assets/svgs/LocationIcon'
 import googleApis from '../apis/googleApis'
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 
 
-const SearchWithSuggestions = ({searchResult}) => {
+const SearchWithSuggestions = ({ searchResult }) => {
 
     const [suggestions, setSuggestions] = useState([])
     const [isSuggestion, setIsSuggestion] = useState(false)
@@ -15,7 +15,6 @@ const SearchWithSuggestions = ({searchResult}) => {
 
 
     const searchHandle = async (i) => {
-        setInputValue(i)
 
 
         const debouncedFunction = debounce(async () => {
@@ -30,6 +29,9 @@ const SearchWithSuggestions = ({searchResult}) => {
         debouncedFunction();
 
     }
+
+
+    const debouncedGetPrediction = useCallback(debounce(searchHandle, 500), []);
 
 
     const seledtedSuggestionHandle = async (index) => {
@@ -66,7 +68,10 @@ const SearchWithSuggestions = ({searchResult}) => {
                 <TextInput
                     cursorColor={theme.color.primary}
                     value={inputValue}
-                    onChangeText={searchHandle}
+                    onChangeText={(i) => {
+                        debouncedGetPrediction(i);
+                        setInputValue(i);
+                    }}
                     placeholderTextColor={theme.color.gray300}
                     placeholder='Search your area'
                     style={{

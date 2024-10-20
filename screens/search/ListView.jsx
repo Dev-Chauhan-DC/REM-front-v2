@@ -2,15 +2,15 @@ import {
     View,
     ScrollView, ToastAndroid, Text, Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import IconButton from '../../components/IconButton';
 import PropertyCard from '../../components/PropertyCard';
 import theme from '../../theme';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import calculateDaysAgo from '../../utilities/calculateDaysAgo';
 import apis from '../../apis/apis';
 import LoadingCard from '../../components/LoadingCard';
-import {useRecoilState} from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
     filterStringState,
     northeastLatState,
@@ -19,17 +19,17 @@ import {
     southwestLngState,
 } from '../../atoms/search';
 import qs from '../../utilities/queryString/queryString.js';
-import {useSafeAreaInsets} from "react-native-safe-area-context";
-import {debounce} from 'lodash';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { debounce } from 'lodash';
 
 const ListView = ({
-                      screenHeight,
-                      searchHeaderHeight,
-                      tebNavigationHeight,
-                      onSortPress,
-                      currentUserId,
+    screenHeight,
+    searchHeaderHeight,
+    tebNavigationHeight,
+    onSortPress,
+    currentUserId,
 
-                  }) => {
+}) => {
     const [iconButtonHeight, setIconButtonHeight] = useState(0);
 
     const insets = useSafeAreaInsets();
@@ -51,26 +51,6 @@ const ListView = ({
 
     const navigation = useNavigation();
 
-    const savePropertyHandle = async (id, index) => {
-        try {
-
-            let tempArray = JSON.parse(JSON.stringify(properties));
-            if(properties[index].saved_properties.length){
-
-                tempArray[index].saved_properties = []
-                setProperties(tempArray)
-
-            }else{
-                tempArray[index].saved_properties.push("1")
-                setProperties(tempArray)
-
-            }
-            const response = await apis.saveProperty(id);
-        } catch (e) {
-            console.warn(e?.response?.data?.message || 'Something went wrong');
-        }
-    };
-
     const debouncedFunction = debounce(() => {
         setPage(page + 1);
         const newStr = qs.set(filterString, 'page', page + 1);
@@ -78,7 +58,7 @@ const ListView = ({
     }, 500);
 
     const handleScroll = (event) => {
-        const {contentOffset, contentSize, layoutMeasurement} = event.nativeEvent;
+        const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
 
         if (distanceFromBottom < 1) {
@@ -104,7 +84,6 @@ const ListView = ({
             setProperties([...properties, ...response?.data?.data]);
 
             setPropertyCount(response?.data?.data?.length);
-            console.log("running..23")
 
 
         } catch (e) {
@@ -155,11 +134,10 @@ const ListView = ({
                             return (
                                 <PropertyCard
                                     isLikeActive={i?.saved_properties?.length ? true : false}
-                                    onHeartClick={() => savePropertyHandle(i?.id, index)}
                                     onPress={() =>
-                                        navigation.navigate('propertyInfo', {propertyId: i.id})
+                                        navigation.navigate('propertyInfo', { propertyId: i.id })
                                     }
-                                    ShowLikeButton={true}
+                                    ShowLikeButton={false}
                                     images={
                                         i.property_photos[0] && i.property_photos[0].photos
                                             ? i.property_photos[0].photos
@@ -175,7 +153,7 @@ const ListView = ({
                                     price={i.price}
                                     bad={i.bedroom_count}
                                     key={index}
-                                    style={{marginBottom: 20}}
+                                    style={{ marginBottom: 20 }}
                                 />
                             );
                         })

@@ -1,5 +1,5 @@
-import {View, Text, ScrollView, useWindowDimensions, StatusBar, Button, SafeAreaView, Platform} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { View, Text, ScrollView, useWindowDimensions, StatusBar, Button, SafeAreaView, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import SelectToggle from '../../components/SelectToggle';
 import theme from '../../theme';
 import OptionSelectWithIcon from '../../components/OptionSelectWithIcon';
@@ -10,10 +10,10 @@ import HouseIcon from '../../assets/svgs/HouseIcon';
 import Input from '../../components/Input';
 import OptionSelect from '../../components/OptionSelect';
 import StepsBottom from '../../components/StepsBottom';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '../../components/BottomSheet';
 import Video from 'react-native-video';
-import {useRecoilState} from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
     addressState, balconyCountState,
     bathroomCountState,
@@ -21,7 +21,7 @@ import {
     houseTypeState, kitchenCountState, ownershipState, plotAreaState, propertyAgeState, propertyFloorState,
     purposeState, totalFloorState,
 } from '../../atoms/listing/first';
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 const First = () => {
@@ -218,7 +218,7 @@ const First = () => {
                 setInitPropFloorError('');
                 totalValidation--
             }
-        }else{
+        } else {
             setInitPropFloorError('');
             totalValidation--
         }
@@ -290,7 +290,7 @@ const First = () => {
                                 showPlayButton={false}
                                 onPlayClick={() => setIsBottomSheet(true)}
                                 title={'House Type'}
-                                iconList={[<ApartmentIcon/>, <GateIcon/>, <BuildingIcon/>, <HouseIcon/>]}
+                                iconList={[<ApartmentIcon />, <GateIcon />, <BuildingIcon />, <HouseIcon />]}
                                 optionsList={['apartment', 'gated community Villa', 'standalone building', 'independent house / villa']}
                                 selectedOption={homeTypeHandle}
                             />
@@ -299,7 +299,7 @@ const First = () => {
                                 value={address}
                                 onChangeText={addressHandle}
                                 showPlayButton={false}
-                                placeholder={'Address'}
+                                placeholder={'Address ( visible to all users ) *'}
                             />
                             <OptionSelect
                                 error={initBedError}
@@ -310,7 +310,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={bedroomHandle}
-                                title={'Bedrooms'}
+                                title={'Bedrooms *'}
                                 optionStyle={{
                                     paddingHorizontal: 0,
                                     width: 40,
@@ -327,7 +327,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={bathroomHandle}
-                                title={'Bathrooms'}
+                                title={'Bathrooms *'}
                                 optionStyle={{
                                     paddingHorizontal: 0,
                                     width: 40,
@@ -345,7 +345,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={hallHandle}
-                                title={'Hall'}
+                                title={'Hall *'}
                                 optionStyle={{
                                     paddingHorizontal: 0,
                                     width: 40,
@@ -362,7 +362,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={kitchenHandle}
-                                title={'Kitchen'}
+                                title={'Kitchen *'}
                                 optionStyle={{
                                     paddingHorizontal: 0,
                                     width: 40,
@@ -379,7 +379,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={balconyHandle}
-                                title={'Balcony'}
+                                title={'Balcony *'}
                                 optionStyle={{
                                     paddingHorizontal: 0,
                                     width: 40,
@@ -391,7 +391,7 @@ const First = () => {
                                 error={initBuiltUpError}
                                 value={builtUpArea}
                                 showPlayButton={false}
-                                placeholder={'Built Up Area (sqft)'}
+                                placeholder={'Built-Up Area in Sqft (e.g. 1000) *'}
                                 onChangeText={builtUpAreaHandle}
                                 keyboardType={'numeric'}
                             />
@@ -399,7 +399,7 @@ const First = () => {
                                 error={initCarpetError}
                                 value={carpetArea}
                                 showPlayButton={false}
-                                placeholder={'Carpet Area (sqft)'}
+                                placeholder={'Carpet Area in Sqft (e.g. 1000) *'}
                                 onChangeText={carpetAreaHandle}
                                 keyboardType={'numeric'}
                             />
@@ -410,7 +410,7 @@ const First = () => {
                                 error={initPlotAreaError}
                                 value={plotArea}
                                 showPlayButton={false}
-                                placeholder={'Plot Area'}
+                                placeholder={'Plot Area in Sqft (e.g. 1000) *'}
                                 onChangeText={plotAreaHandle}
                                 keyboardType={'numeric'}
                             />
@@ -423,7 +423,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={facingHandle}
-                                title={'Facing'}
+                                title={'Facing *'}
                                 options={['North', 'South', 'East', 'West', 'North - West', 'North - East', 'South - West', 'South - East']}
 
                             />
@@ -433,7 +433,7 @@ const First = () => {
                                 value={propertyAge}
                                 onChangeText={propertyAgeHandle}
                                 showPlayButton={false}
-                                placeholder={'Property age ( Year )'}
+                                placeholder={'Property Age in Years (e.g. 5) *'}
                                 keyboardType={'numeric'}
                             />
                             {/* <ProgressBar title={"Total floors"} showPlayButton={false} onPlayClick={() => console.warn("click")} /> */}
@@ -442,7 +442,7 @@ const First = () => {
                                 value={totalFloor}
                                 onChangeText={totalFloorHandle}
                                 showPlayButton={false}
-                                placeholder={'Total floors'}
+                                placeholder={'Total Floors (e.g. 5) *'}
                                 keyboardType={'numeric'}
                             />
                             {/* <ProgressBar title={"Property floors"} showPlayButton={false} onPlayClick={() => console.warn("click")} /> */}
@@ -454,7 +454,7 @@ const First = () => {
                                 value={propertyFloor}
                                 onChangeText={propertyFloorHandle}
                                 showPlayButton={false}
-                                placeholder={'Property floors'}
+                                placeholder={'Property Floor (e.g. 3) *'}
                                 keyboardType={'numeric'}
                             />
                             <OptionSelect
@@ -466,7 +466,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={flooringTypesHandle}
-                                title={'Flooring type'}
+                                title={'Flooring type *'}
                                 options={['Cement', 'Mosaic', 'Marble / Granite', 'Wooden', 'Vitrified Tiles']}
 
                             />
@@ -482,7 +482,7 @@ const First = () => {
                                     fontFamily: theme.font.medium,
                                 }}
                                 selectedOption={ownshipHandle}
-                                title={'Ownership'}
+                                title={'Ownership type *'}
                                 options={['Self Owned', 'On Lease']}
 
                             />
@@ -495,7 +495,7 @@ const First = () => {
                     onNextPress={() => onNextPressHandle()}
                     onLayout={(i) => setStepsBottomHeight(i.layout.height)}
                     stepCount={5}
-                    currentStep={1}/>
+                    currentStep={1} />
 
                 <BottomSheet
                     isShow={isBottomSheet}
@@ -521,7 +521,7 @@ const First = () => {
                                 resizeMode="cover"
                                 onBuffer={this.onBuffer}                // Callback when remote video is buffering
                                 onError={this.videoError}
-                                source={{uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}}
+                                source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
                                 style={{
                                     height: '100%',
                                 }}
@@ -549,7 +549,7 @@ const First = () => {
                     </View>
 
                 </BottomSheet>
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
 
             </View>
         </SafeAreaView>

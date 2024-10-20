@@ -1,6 +1,6 @@
-import {View, ScrollView, useWindowDimensions, StatusBar, SafeAreaView, Platform} from 'react-native';
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import { View, ScrollView, useWindowDimensions, StatusBar, SafeAreaView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import theme from '../../theme';
 import OptionSelect from '../../components/OptionSelect';
 import StepsBottom from '../../components/StepsBottom';
@@ -20,7 +20,7 @@ import SwimmingpoolIcon from '../../assets/svgs/SwimmingPoolIcon';
 import IntercomIcon from '../../assets/svgs/IntercomIcon';
 import ParkingIcon from '../../assets/svgs/ParkingIcon';
 import RainWaterHarvestingIcon from '../../assets/svgs/RainWaterHarvestingIcon';
-import {useRecoilState} from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
     amenityArrayState,
     gatedSecurityState,
@@ -28,7 +28,7 @@ import {
     powerBackupState,
     waterSupplyState,
 } from '../../atoms/listing/fourth';
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Forth = () => {
     const insets = useSafeAreaInsets();
@@ -114,7 +114,7 @@ const Forth = () => {
                             <OptionSelect
                                 error={''}
                                 initiallySelected={waterSupply - 1}
-                                title={'Water Supply'}
+                                title={'Water Supply *'}
                                 options={['Corporation', 'Borewell', 'Both']}
                                 titleStyle={{
                                     fontSize: 16,
@@ -126,7 +126,7 @@ const Forth = () => {
                             <OptionSelect
                                 error={''}
                                 initiallySelected={powerBackup - 1}
-                                title={'Power Backup'}
+                                title={'Power Backup *'}
                                 options={['Full', 'Partial', 'None']}
                                 titleStyle={{
                                     fontSize: 16,
@@ -139,10 +139,10 @@ const Forth = () => {
                                 initArray={amenities}
                                 onChangeArray={amenityHandle}
                                 showPlayButton={false}
-                                iconList={[<ACIcon/>, <ClubIcon/>, <PlaygroundIcon/>, <GasLineIcon/>, <WifiIcon/>,
-                                    <SewageIcon/>, <LiftIcon/>, <FireAlarmIcon/>, <HouseKeeperIcon/>, <ParkIcon/>,
-                                    <ShoppingCenterIcon/>, <SwimmingpoolIcon/>, <IntercomIcon/>, <ParkingIcon/>,
-                                    <RainWaterHarvestingIcon/>]}
+                                iconList={[<ACIcon />, <ClubIcon />, <PlaygroundIcon />, <GasLineIcon />, <WifiIcon />,
+                                <SewageIcon />, <LiftIcon />, <FireAlarmIcon />, <HouseKeeperIcon />, <ParkIcon />,
+                                <ShoppingCenterIcon />, <SwimmingpoolIcon />, <IntercomIcon />, <ParkingIcon />,
+                                <RainWaterHarvestingIcon />]}
                                 titleList={['Air Conditioner', 'Club', 'Playground', 'Gas', 'Internet', 'Sewage', 'Lift', 'Fire Alarm', 'House Keeper', 'Park', 'Shopping Center', 'Swimming pool', 'Intercom', 'Visitor parking', 'Rain water harvesting']}
                             />
                         </View>
@@ -154,8 +154,8 @@ const Forth = () => {
                     onNextPress={() => navigation.navigate('fifth')}
                     onLayout={(i) => setStepsBottomHeight(i.layout.height)}
                     stepCount={5}
-                    currentStep={4}/>
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                    currentStep={4} />
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
 
             </View>
         </SafeAreaView>

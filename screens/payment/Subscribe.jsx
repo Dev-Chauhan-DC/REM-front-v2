@@ -1,14 +1,14 @@
 import {
-    View,
-    Text,
-    StatusBar,
-    Image,
-    ScrollView,
-    useWindowDimensions,
-    Alert,
-    Pressable, ToastAndroid,
+  View,
+  Text,
+  StatusBar,
+  Image,
+  ScrollView,
+  useWindowDimensions,
+  Alert,
+  Pressable, ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import theme from '../../theme';
 import ButtonComponent from '../../components/ButtonComponent';
 import SmallInput from '../../components/SmallInput';
@@ -17,10 +17,10 @@ import razorpayApis from '../../apis/razorpayApis';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart';
 
-const Subscribe = ({refreash}) => {
+const Subscribe = ({ refreash }) => {
   const [couponValue, setCouponValue] = useState('');
 
-  const {width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
 
   const subscribeHandle = async () => {
     try {
@@ -61,7 +61,7 @@ const Subscribe = ({refreash}) => {
             );
           }
         } else {
-            ToastAndroid.show("Payment cancel", ToastAndroid.SHORT);
+          ToastAndroid.show("Payment cancel", ToastAndroid.SHORT);
         }
       } else if (
         getOrderId.data.success &&
@@ -92,7 +92,7 @@ const Subscribe = ({refreash}) => {
         Alert.alert('something went wrong');
       }
     } catch (e) {
-        ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
+      ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
     }
   };
 
@@ -144,7 +144,7 @@ const Subscribe = ({refreash}) => {
             style={{
               width: '100%',
               marginTop: 7,
-                backgroundColor: couponValue.length === 0 ? theme.color.primary : theme.color.black
+              backgroundColor: couponValue.length === 0 ? theme.color.primary : theme.color.black
             }}
             titleStyle={{
               fontFamily: theme.font.semiBold,

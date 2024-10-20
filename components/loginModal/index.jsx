@@ -1,41 +1,49 @@
-import { StatusBar, Text, View, SafeAreaView, Pressable, Alert, Platform, Linking } from 'react-native';
-import React, { useState } from 'react';
-import Input from '../../components/Input';
-import ButtonComponent from '../../components/ButtonComponent';
-import theme from '../../theme';
-import { useNavigation } from '@react-navigation/native';
-import apis from '../../apis/apis';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNRestart from 'react-native-restart';
-import LeftArrow from '../../assets/svgs/LeftArrow';
-import LogoSvg from '../../assets/svgs/LogoSvg';
+import { View, Text, Pressable, StatusBar } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import Modal from '../modal/Modal'
+import { useRecoilState } from 'recoil'
+import { loginShowState } from '../../atoms/login'
+import theme from '../../theme'
+import LogoSvg from '../../assets/svgs/LogoSvg'
+import Input from '../Input'
+import ButtonComponent from '../ButtonComponent'
+import LeftArrow from '../../assets/svgs/LeftArrow'
+import apis from '../../apis/apis'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { userState } from '../../atoms/profile/user'
 
-const LoginScreen = () => {
-    const [phone, setPhone] = useState('');
-    const [otp, setOtp] = useState('');
+
+
+const LoginModal = () => {
+    const [show, setShow] = useRecoilState(loginShowState);
+    const [user, setUser] = useRecoilState(userState);
     const [isOtpShow, setIsOtpShow] = useState(false);
     const [sendOtpLoading, setSendOtpLoading] = useState(false);
     const [submitOtpLoading, setSubmitOtpLoading] = useState(false);
+    const [phone, setPhone] = useState('');
+    const [otp, setOtp] = useState('');
 
-    const navigation = useNavigation();
+
+
+    const defaultStateHandle = () => {
+        setIsOtpShow(false)
+        setSendOtpLoading(false)
+        setSubmitOtpLoading(false)
+        setPhone('')
+        setOtp('')
+    }
+
 
     const otpAndVerify = async () => {
         try {
             setSubmitOtpLoading(true)
             const response = await apis.otpAndVerify(phone, otp);
-
-            const authType = await AsyncStorage.getItem('authType');
-            if (authType === 'signup') {
-                navigation.navigate('role');
-            } else {
-                RNRestart.Restart();
-            }
-
-            setSubmitOtpLoading(false)
+            const result = await apis.getUser();
+            setUser(result.data.data);
+            setSubmitOtpLoading(false);
+            setShow(false);
+            defaultStateHandle()
         } catch (e) {
-            Alert.alert('', `${e?.response?.data?.message || 'Something went wrong'}`, [
-                { text: 'OK', onPress: () => null },
-            ]);
             setSubmitOtpLoading(false)
         }
     };
@@ -43,29 +51,26 @@ const LoginScreen = () => {
     const sendOtpHandle = async () => {
         try {
             setSendOtpLoading(true);
-            const response = await apis.sendOtp(phone);
+            await apis.sendOtp(phone);
             setSendOtpLoading(false);
             setIsOtpShow(true);
 
         } catch (e) {
-            Alert.alert('', `${e?.response?.data?.message || 'Something went wrong'}`, [
-                { text: 'OK', onPress: () => null },
-            ]);
             setSendOtpLoading(false);
         }
     };
 
 
     return (
-        <SafeAreaView
+        <Modal
+            onOutsidePress={() => setShow(false)}
+            visible={show}
             style={{
-                flex: 1,
-                backgroundColor: 'white',
-            }}>
+                borderRadius: 10
+            }}
+        >
             <View
                 style={{
-                    flex: 1,
-                    backgroundColor: 'white',
                     paddingHorizontal: theme.screen.horizontalPadding,
                     paddingTop: theme.screen.paddingTop,
                 }}>
@@ -107,7 +112,8 @@ const LoginScreen = () => {
                             style={{
                                 color: theme.color.black,
                                 fontFamily: theme.font.regular,
-                                marginTop: 20
+                                marginTop: 20,
+                                textAlign: 'center'
                             }}
                         >By continuing, you agree to the
                             <Text
@@ -172,10 +178,11 @@ const LoginScreen = () => {
                 </View>
 
 
-                <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
             </View>
-        </SafeAreaView>
-    );
-};
+            <StatusBar backgroundColor={'rgba(255, 255, 255, 0.3)'} />
 
-export default LoginScreen;
+        </Modal>
+    )
+}
+
+export default LoginModal

@@ -1,14 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Buffer} from 'buffer';
+import { Buffer } from 'buffer';
 
-// const baseUrl = 'https://www.screentimes.in';
-const baseUrl = 'http://172.16.20.6:3000';
+const baseUrl = 'http://192.168.1.35:3001/api';
+// const baseUrl = 'https://nextproperty.nexsyys.com/api';
+
 
 const auth = async phone => {
-  try {
-    const data = {
-      phone: phone,
+    try {
+        const data = {
+            phone: phone,
         };
 
         const response = await axios.post(`${baseUrl}/auth/signup`, data);
@@ -22,6 +23,7 @@ const auth = async phone => {
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -44,20 +46,21 @@ const otpAndVerify = async (phone, otp) => {
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
 
 const sendOtp = async (phone) => {
-    try{
+    try {
         const data = {
             phone: phone,
         };
 
         const response = await axios.post(`${baseUrl}/auth/send-otp`, data);
         return response;
-    }catch (e) {
-        console.log(e)
+    } catch (e) {
+        console.error(e)
         throw e;
     }
 }
@@ -71,8 +74,9 @@ const getRoles = async () => {
             },
         });
         return response;
-    } catch (error) {
-        throw error;
+    } catch (e) {
+        console.error(e);
+        throw e;
     }
 };
 
@@ -89,6 +93,7 @@ const updateRoles = async roleId => {
         });
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -103,6 +108,7 @@ const getUser = async () => {
         });
         return response;
     } catch (e) {
+        console.error(e)
         throw e;
     }
 };
@@ -117,6 +123,7 @@ const updateProfileInfo = async body => {
         });
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -131,6 +138,7 @@ const createProperty = async data => {
         });
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -149,6 +157,7 @@ const createPropertyAmenities = async body => {
         );
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -218,6 +227,7 @@ const getSearchResults = async data => {
         );
         return response;
     } catch (e) {
+        console.error(e)
         throw e;
     }
 };
@@ -237,12 +247,14 @@ const getPropertyById = async (id, query) => {
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
 
 const saveProperty = async id => {
     const token = await AsyncStorage.getItem('token');
+
 
     const data = {
         propertyId: id,
@@ -257,6 +269,7 @@ const saveProperty = async id => {
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -276,6 +289,7 @@ const getSavedProperty = async sortingQuery => {
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -292,6 +306,7 @@ const getPropertiesById = async ids => {
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -312,6 +327,7 @@ const getPresignedUrl = async reqData => {
         });
         return responce;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -343,6 +359,7 @@ const createPropertyPhotos = async body => {
         });
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -364,6 +381,7 @@ const createInterestedPerson = async reqData => {
         );
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -387,6 +405,7 @@ const generateOrderId = async reqData => {
         );
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -402,6 +421,7 @@ const isUserSubscriptionActive = async () => {
         });
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -428,6 +448,7 @@ const createSubscription = async reqData => {
         );
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -437,14 +458,15 @@ const createFile = async (data) => {
         const token = await AsyncStorage.getItem('token');
         const response = await axios.post(
             `${baseUrl}/file/create`, data, {
-                headers: {
-                    Authorization: token,
-                },
+            headers: {
+                Authorization: token,
             },
+        },
         );
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -454,14 +476,15 @@ const createPropertyPhotoFiles = async (data) => {
         const token = await AsyncStorage.getItem('token');
         const response = await axios.post(
             `${baseUrl}/list/property/images/file/id`, data, {
-                headers: {
-                    Authorization: token,
-                },
+            headers: {
+                Authorization: token,
             },
+        },
         );
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
@@ -470,18 +493,37 @@ const readFileByFileId = async (fileId) => {
     try {
         const token = await AsyncStorage.getItem('token');
         const response = await axios.post(
-            `${baseUrl}/file/read`, {fileId}, {
-                headers: {
-                    Authorization: token,
-                },
+            `${baseUrl}/file/read`, { fileId }, {
+            headers: {
+                Authorization: token,
             },
+        },
         );
 
         return response;
     } catch (e) {
+        console.error(e);
         throw e;
     }
 };
+
+
+
+const getUserInfo = async (userId) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const result = await axios.get(`${baseUrl}/user/info/${userId}`, {
+            headers: {
+                Authorization: token,
+            },
+        },)
+
+        return result;
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+}
 
 export default {
     auth,
@@ -510,6 +552,7 @@ export default {
     createSubscription,
     createFile,
     createPropertyPhotoFiles,
-    readFileByFileId
+    readFileByFileId,
+    getUserInfo
 
 };

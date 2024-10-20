@@ -6,8 +6,9 @@ import {
     useWindowDimensions,
     ScrollView,
     StatusBar, Linking, SafeAreaView,
+    ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme';
 import LeftArrow from '../../assets/svgs/LeftArrow';
 import ShareIcon from '../../assets/svgs/ShareIcon';
@@ -30,14 +31,14 @@ import PossessionIcon from '../../assets/svgs/PossessionIcon';
 import PropertyTypeIcon from '../../assets/svgs/PropertyTypeIcon';
 import DaysOnAppIcon from '../../assets/svgs/DaysOnAppIcon';
 import IconList from '../../components/IconList';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ButtonComponent from '../../components/ButtonComponent';
 import OptionSelect from '../../components/OptionSelect';
 import StreetViewIcon from '../../assets/svgs/StreetViewIcon';
 import RightHalfArrow from '../../assets/svgs/RightHalfArrow';
 import apis from '../../apis/apis';
 import calculateDaysAgo from '../../utilities/calculateDaysAgo';
-import {formatPhoneNumber} from '../../utilities/formatPhoneNumber';
+import { formatPhoneNumber } from '../../utilities/formatPhoneNumber';
 import ActiveHeart from '../../assets/svgs/ActiveHeart';
 import BuildingIcon from "../../assets/svgs/BuildingIcon";
 import PlotAreaIcon from "../../assets/svgs/PlotAreaIcon";
@@ -53,11 +54,22 @@ import GymIcon from "../../assets/svgs/GymIcon";
 import HousePersonIcon from "../../assets/svgs/HousePersonIcon";
 import LoanIcon from "../../assets/svgs/LoanIcon";
 import ApartmentIcon from "../../assets/svgs/ApartmentIcon";
+import { useRecoilState } from 'recoil';
+import { userState } from '../../atoms/profile/user';
+import { loginShowState } from '../../atoms/login';
 
-const PropertyInfo = ({route}) => {
+const PropertyInfo = ({ route }) => {
     const screenWidth = useWindowDimensions().width;
     const [propertyInfo, setPropertyInfo] = useState({});
     const [isPhoneShow, setIsPhoneShow] = useState(false);
+    const [user, setUser] = useRecoilState(userState)
+    const [loginModal, setLoginModal] = useRecoilState(loginShowState)
+    const [like, setLike] = useState(false);
+    const [propUser, setPropUser] = useState(null)
+
+
+
+    const propertyId = route.params.propertyId;
 
     const navigation = useNavigation();
 
@@ -76,19 +88,21 @@ const PropertyInfo = ({route}) => {
 
     const savePropertyHandle = async () => {
         try {
-            const response = await apis.saveProperty(propertyInfo.id);
-
-
-            let propertyInfoArray = {...propertyInfo};
-
-
-            if (propertyInfoArray && propertyInfoArray.saved_properties && propertyInfoArray.saved_properties.length === 0) {
-                propertyInfoArray.saved_properties.push('1');
-                setPropertyInfo(propertyInfoArray);
-            } else {
-                propertyInfoArray.saved_properties.length = 0;
-                setPropertyInfo(propertyInfoArray);
+            if (user) {
+                const result = await apis.saveProperty(propertyInfo.id);
+                if (result.data.data === 1) {
+                    ToastAndroid.show('Property Removed', ToastAndroid.SHORT);
+                    setLike(false);
+                } else {
+                    ToastAndroid.show('Property Saved', ToastAndroid.SHORT)
+                    setLike(true);
+                }
+                getPropertyData(propertyId);
+                return;
             }
+
+            setLoginModal(true)
+
 
 
         } catch (e) {
@@ -98,20 +112,38 @@ const PropertyInfo = ({route}) => {
 
     const showNumberClick = async () => {
         try {
-            if (isPhoneShow) await Linking.openURL(`tel:${propertyInfo.user.phone_number}`);
-            setIsPhoneShow(true);
-            const data = {
-                propertyId: propertyInfo.id,
-            };
-            const response = await apis.createInterestedPerson(data);
+
+            if (!user) {
+                setLoginModal(true);
+                return;
+            }
+
+            if (!propUser) {
+                const result = await apis.getUserInfo(propertyInfo.user_id);
+                setPropUser(result.data.data);
+                const data = {
+                    propertyId: propertyInfo.id,
+                };
+                await apis.createInterestedPerson(data);
+                return
+            }
+
+
+            if (propUser?.phone_number) {
+                await Linking.openURL(`tel:${propUser.phone_number}`);
+            }
+
+
         } catch (e) {
             console.warn(e?.response?.data?.message || 'Something went wrong');
         }
     };
 
     useEffect(() => {
-        const propertyId = route.params.propertyId;
-        getPropertyData(propertyId);
+        if (propertyId) {
+            getPropertyData(propertyId);
+        }
+
     }, [route]);
 
     return (
@@ -147,7 +179,7 @@ const PropertyInfo = ({route}) => {
                                 source={
                                     propertyInfo.property_photos === undefined
                                         ? require('../../assets/images/house.jpg')
-                                        : {uri: propertyInfo?.property_photos[0]?.photos}
+                                        : { uri: propertyInfo?.property_photos[0]?.photos }
                                 }
                             />
                         </Pressable>
@@ -190,8 +222,7 @@ const PropertyInfo = ({route}) => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                 }}>
-                                {propertyInfo.saved_properties !== undefined &&
-                                propertyInfo.saved_properties.length !== 0 ? (
+                                {like ? (
                                     <ActiveHeart
                                         style={{
                                             width: 14,
@@ -387,7 +418,7 @@ const PropertyInfo = ({route}) => {
                             <InfoCard
                                 property={'Purpose'}
                                 value={`For ${propertyInfo?.purpose?.purpose || ""}`}
-                                icon={propertyInfo?.purpose_id == 1 ? <SellIcon/> : <RentIcon/>}
+                                icon={propertyInfo?.purpose_id == 1 ? <SellIcon /> : <RentIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -402,7 +433,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Plot Area'}
                                         value={`${propertyInfo?.plot_area || ""} sq ft`}
-                                        icon={<PlotAreaIcon/>}
+                                        icon={<PlotAreaIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -418,12 +449,11 @@ const PropertyInfo = ({route}) => {
                             }}>
                             <InfoCard
                                 property={'Build up area'}
-                                value={`${
-                                    propertyInfo.built_up_area
-                                        ? propertyInfo.built_up_area.toLocaleString()
-                                        : '0'
-                                } sq ft`}
-                                icon={<BuildUpAreaIcon/>}
+                                value={`${propertyInfo.built_up_area
+                                    ? propertyInfo.built_up_area.toLocaleString()
+                                    : '0'
+                                    } sq ft`}
+                                icon={<BuildUpAreaIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -435,12 +465,11 @@ const PropertyInfo = ({route}) => {
                             }}>
                             <InfoCard
                                 property={'Carpet area'}
-                                value={`${
-                                    propertyInfo.carpet_area
-                                        ? propertyInfo.carpet_area.toLocaleString()
-                                        : '0'
-                                } sq ft`}
-                                icon={<CarpetAreaIcon/>}
+                                value={`${propertyInfo.carpet_area
+                                    ? propertyInfo.carpet_area.toLocaleString()
+                                    : '0'
+                                    } sq ft`}
+                                icon={<CarpetAreaIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -453,7 +482,7 @@ const PropertyInfo = ({route}) => {
                             <InfoCard
                                 property={'Availability'}
                                 value={propertyInfo?.availability_type?.availability_type || ""}
-                                icon={<AvailabilityIcon/>}
+                                icon={<AvailabilityIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -468,7 +497,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Parking slot'}
                                         value={`${propertyInfo?.parking_slot_four_wheeler_count || ""} Car`}
-                                        icon={<ParkingIcon/>}
+                                        icon={<ParkingIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -488,7 +517,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Parking slot'}
                                         value={`${propertyInfo?.parking_slot_two_wheeler_count || ""} Bike`}
-                                        icon={<BikeIcon/>}
+                                        icon={<BikeIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -505,7 +534,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Corner property'}
                                         value={'Yes'}
-                                        icon={<AngleIcon/>}
+                                        icon={<AngleIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -525,7 +554,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Negotiable'}
                                         value={"Yes"}
-                                        icon={<NegotiableIcon/>}
+                                        icon={<NegotiableIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -542,7 +571,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Tenant'}
                                         value={propertyInfo?.tenant?.tenant || ""}
-                                        icon={<TenantIcon/>}
+                                        icon={<TenantIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -558,7 +587,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Gym'}
                                         value={"Yes"}
-                                        icon={<GymIcon/>}
+                                        icon={<GymIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -577,7 +606,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.furnishing.furnishing
                                         : 'null'
                                 }
-                                icon={<FurnishingStatusIcon/>}
+                                icon={<FurnishingStatusIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -590,7 +619,7 @@ const PropertyInfo = ({route}) => {
                             <InfoCard
                                 property={'Facing'}
                                 value={propertyInfo.facing ? propertyInfo.facing.facing : 'null'}
-                                icon={<FacingIcon/>}
+                                icon={<FacingIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -607,7 +636,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.flooring_type.flooring_type
                                         : 'null'
                                 }
-                                icon={<FlooringIcon/>}
+                                icon={<FlooringIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -619,10 +648,9 @@ const PropertyInfo = ({route}) => {
                             }}>
                             <InfoCard
                                 property={'Property age'}
-                                value={`${
-                                    propertyInfo.property_age ? propertyInfo.property_age : 'null'
-                                } Years`}
-                                icon={<PropertyAgeIcon/>}
+                                value={`${propertyInfo.property_age ? propertyInfo.property_age : 'null'
+                                    } Years`}
+                                icon={<PropertyAgeIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -634,16 +662,15 @@ const PropertyInfo = ({route}) => {
                             }}>
                             <InfoCard
                                 property={'Maintenance'}
-                                value={`${
-                                    propertyInfo.maintenance
-                                        ? propertyInfo.maintenance.toLocaleString('en-IN', {
-                                            style: 'currency',
-                                            currency: 'INR',
-                                            minimumFractionDigits: 0
-                                        })
-                                        : 'null'
-                                }`}
-                                icon={<MaintenanceIcon/>}
+                                value={`${propertyInfo.maintenance
+                                    ? propertyInfo.maintenance.toLocaleString('en-IN', {
+                                        style: 'currency',
+                                        currency: 'INR',
+                                        minimumFractionDigits: 0
+                                    })
+                                    : 'null'
+                                    }`}
+                                icon={<MaintenanceIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -660,7 +687,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.ownership_type.ownership_type
                                         : 'null'
                                 }
-                                icon={<FloorIcon/>}
+                                icon={<FloorIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -677,7 +704,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.power_backup.power_backup
                                         : 'null'
                                 }
-                                icon={<PowerBackupIcon/>}
+                                icon={<PowerBackupIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -694,7 +721,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.water_supply.water_supply
                                         : 'null'
                                 }
-                                icon={<WaterSupplyIcon/>}
+                                icon={<WaterSupplyIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -707,7 +734,7 @@ const PropertyInfo = ({route}) => {
                             <InfoCard
                                 property={'Gated Security'}
                                 value={propertyInfo.gated_security ? 'Yes' : 'No'}
-                                icon={<GatedSecurityIcon/>}
+                                icon={<GatedSecurityIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -724,7 +751,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.kitchen_type.kitchen_type
                                         : 'null'
                                 }
-                                icon={<KitchenTypeIcon/>}
+                                icon={<KitchenTypeIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -737,7 +764,7 @@ const PropertyInfo = ({route}) => {
                             <InfoCard
                                 property={'Cupboards'}
                                 value={propertyInfo.cupboard ? propertyInfo.cupboard : '0'}
-                                icon={<CupBoardsIcon/>}
+                                icon={<CupBoardsIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -756,7 +783,7 @@ const PropertyInfo = ({route}) => {
                                         ? calculateDaysAgo(propertyInfo.createdAt)
                                         : 'null'
                                 }
-                                icon={<DaysOnAppIcon/>}
+                                icon={<DaysOnAppIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -772,7 +799,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Total Floor'}
                                         value={propertyInfo?.total_floor || ""}
-                                        icon={<BuildingIcon/>}
+                                        icon={<BuildingIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -788,7 +815,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Property Floor'}
                                         value={propertyInfo?.property_floor || ""}
-                                        icon={<HousePersonIcon/>}
+                                        icon={<HousePersonIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -804,7 +831,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Under Loan'}
                                         value={"Yes"}
-                                        icon={<LoanIcon/>}
+                                        icon={<LoanIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -820,7 +847,7 @@ const PropertyInfo = ({route}) => {
                                     <InfoCard
                                         property={'Flats in building'}
                                         value={propertyInfo?.flats_in_building || ""}
-                                        icon={<ApartmentIcon/>}
+                                        icon={<ApartmentIcon />}
                                         style={{
                                             margin: 5,
                                         }}
@@ -838,7 +865,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.possession.possession
                                         : 'null'
                                 }
-                                icon={<PossessionIcon/>}
+                                icon={<PossessionIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -855,7 +882,7 @@ const PropertyInfo = ({route}) => {
                                         ? propertyInfo.home_type.home_type
                                         : 'null'
                                 }
-                                icon={<PropertyTypeIcon/>}
+                                icon={<PropertyTypeIcon />}
                                 style={{
                                     margin: 5,
                                 }}
@@ -884,7 +911,7 @@ const PropertyInfo = ({route}) => {
                                 gap: 20,
                             }}>
                             {propertyInfo.property_amenities &&
-                            propertyInfo.property_amenities.length !== 0 ? (
+                                propertyInfo.property_amenities.length !== 0 ? (
                                 propertyInfo.property_amenities.map((i, index) => {
                                     return (
                                         <IconList
@@ -1170,13 +1197,7 @@ const PropertyInfo = ({route}) => {
                         <ButtonComponent
                             onPress={showNumberClick}
                             title={
-                                isPhoneShow
-                                    ? propertyInfo.user
-                                        ? formatPhoneNumber(
-                                            '+91' + ' ' + propertyInfo.user.phone_number,
-                                        )
-                                        : 'null'
-                                    : 'Get a Number'
+                                propUser?.phone_number ? propUser.phone_number : 'Get a Number'
                             }
                             titleStyle={{
                                 fontFamily: theme.font.semiBold,
@@ -1188,7 +1209,7 @@ const PropertyInfo = ({route}) => {
                         />
                     </View>
                 </View>
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
             </ScrollView>
         </SafeAreaView>
     );

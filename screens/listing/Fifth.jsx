@@ -7,13 +7,13 @@ import {
     Pressable,
     ActivityIndicator, Alert, StatusBar, Image, SafeAreaView, Platform,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import theme from '../../theme';
 import StepsBottom from '../../components/StepsBottom';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import apis from '../../apis/apis';
 import DeleteIcon from '../../assets/svgs/DeleteIcon';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import s3Utilities from '../../utilities/s3Utilities';
 import {
     addressState, balconyCountState,
@@ -22,8 +22,8 @@ import {
     houseTypeState, kitchenCountState, ownershipState, plotAreaState, propertyAgeState, propertyFloorState,
     purposeState, totalFloorState,
 } from '../../atoms/listing/first';
-import {useRecoilState} from 'recoil';
-import {regionState} from '../../atoms/listing/second';
+import { useRecoilState } from 'recoil';
+import { regionState } from '../../atoms/listing/second';
 import {
     availabilityState, cornerPropertyState, cupboardState,
     expectedPriceState, furnishingState,
@@ -38,9 +38,9 @@ import {
     powerBackupState,
     waterSupplyState,
 } from '../../atoms/listing/fourth';
-import {imageCompress} from '../../utilities/imageCompress';
-import {useSafeAreaInsets} from "react-native-safe-area-context";
-import {imageFilesState, imagesState} from "../../atoms/listing/fifth";
+import { imageCompress } from '../../utilities/imageCompress';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { imageFilesState, imagesState } from "../../atoms/listing/fifth";
 
 const Fifth = () => {
     const insets = useSafeAreaInsets();
@@ -111,7 +111,7 @@ const Fifth = () => {
 
 
         if (imagesFileId.length < 2) {
-            setError('Please select at least two photos');
+            setError('Minimum 3 photos required');
             return;
         }
 
@@ -205,7 +205,7 @@ const Fifth = () => {
                         text: 'OK',
                     },
                 ],
-                {cancelable: false},
+                { cancelable: false },
             );
 
 
@@ -274,7 +274,7 @@ const Fifth = () => {
                         text: 'OK',
                     },
                 ],
-                {cancelable: false},
+                { cancelable: false },
             );
         }
     };
@@ -329,6 +329,16 @@ const Fifth = () => {
                                 :
                                 <></>
                         }
+                        <Text
+                            style={{
+                                color: theme.color.black,
+                                fontFamily: theme.font.medium,
+                                fontSize: 14,
+                                marginBottom: 10,
+                                marginTop: 10,
+
+                            }}
+                        >Upload Images (Minimum 3 photos required) *  </Text>
 
                         <View
                             style={{
@@ -402,7 +412,7 @@ const Fifth = () => {
                                     height: 120,
                                 }}>
                                 {uploadLoading ? (
-                                    <ActivityIndicator color={theme.color.primary}/>
+                                    <ActivityIndicator color={theme.color.primary} />
                                 ) : (
                                     <View
                                         style={{
@@ -437,7 +447,7 @@ const Fifth = () => {
                 <Image
                     width={1000}
                     height={1000}
-                    source={{uri: "file:///data/user/0/com.realestatemarket/cache/62bf4a72-3078-476d-a2a7-631dee80a987.jpg"}}/>
+                    source={{ uri: "file:///data/user/0/com.realestatemarket/cache/62bf4a72-3078-476d-a2a7-631dee80a987.jpg" }} />
 
 
                 <StepsBottom
@@ -447,7 +457,7 @@ const Fifth = () => {
                     stepCount={5}
                     currentStep={5}
                 />
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
 
             </View>
         </SafeAreaView>

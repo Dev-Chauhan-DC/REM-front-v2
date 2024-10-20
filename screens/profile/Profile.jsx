@@ -7,24 +7,24 @@ import {
     Alert,
     Linking, StatusBar, ToastAndroid, BackHandler, SafeAreaView, Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import theme from '../../theme';
 import TebNavigation from '../../components/TebNavigation';
 import RightHalfArrow from '../../assets/svgs/RightHalfArrow';
 import ButtonComponent from '../../components/ButtonComponent';
 import PropertyCard from '../../components/PropertyCard';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '../../components/BottomSheet';
 import PhoneIcon from '../../assets/svgs/PhoneIcon';
 import apis from '../../apis/apis';
 import calculateDaysAgo from '../../utilities/calculateDaysAgo';
-import {formatPhoneNumber} from '../../utilities/formatPhoneNumber';
+import { formatPhoneNumber } from '../../utilities/formatPhoneNumber';
 import LoadingCard from '../../components/LoadingCard';
 import qs from '../../utilities/queryString/queryString';
-import {useRecoilState} from 'recoil';
-import {userState} from '../../atoms/profile/user';
-import {useSafeAreaInsets} from "react-native-safe-area-context";
-import {debounce} from "lodash";
+import { useRecoilState } from 'recoil';
+import { userState } from '../../atoms/profile/user';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { debounce } from "lodash";
 
 const Profile = () => {
     const insets = useSafeAreaInsets();
@@ -48,15 +48,7 @@ const Profile = () => {
 
     const loadingCardArrray = [0, 0, 0, 0, 0, 0];
 
-    const fetchUser = async () => {
-        try {
-            const response = await apis.getUser();
-            const userData = response?.data?.data || {};
-            setUser(userData);
-        } catch (e) {
-            ToastAndroid.show(e?.response?.data?.message || 'Something went wrong', ToastAndroid.SHORT);
-        }
-    };
+
 
     const getUserProperties = async () => {
         try {
@@ -74,14 +66,14 @@ const Profile = () => {
         }
     };
 
-    const debouncedFunction = debounce(()=>{
+    const debouncedFunction = debounce(() => {
         setPage(page + 1);
         const newStr = qs.set(query, 'page', page + 1);
         setQuery(newStr);
-    },500)
+    }, 500)
 
     const handleScroll = (event) => {
-        const {contentOffset, contentSize, layoutMeasurement} = event.nativeEvent;
+        const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
 
         if (distanceFromBottom < 1) {
@@ -94,10 +86,10 @@ const Profile = () => {
             'Delete Property',
             'Are you sure!!',
             [
-                {text: 'Cancel', style: 'cancel'},
-                {text: 'OK', onPress: () => deleteProperty()},
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'OK', onPress: () => deleteProperty() },
             ],
-            {cancelable: false},
+            { cancelable: false },
         );
 
         const deleteProperty = async () => {
@@ -127,13 +119,13 @@ const Profile = () => {
         }
     };
 
-    const debouncedFunctionIP = debounce(async ()=>{
+    const debouncedFunctionIP = debounce(async () => {
         await interestedPeopleHandle(currentIPOpenId, (iPPage + 1));
         setIPPage(iPPage + 1);
-    },500)
+    }, 500)
 
     const handleScrollIP = async (event) => {
-        const {contentOffset, contentSize, layoutMeasurement} = event.nativeEvent;
+        const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
 
         if (distanceFromBottom < 1) {
@@ -152,8 +144,6 @@ const Profile = () => {
 
     useEffect(() => {
         getUserProperties();
-        fetchUser();
-
     }, [query]);
 
     useEffect(() => {
@@ -181,7 +171,7 @@ const Profile = () => {
                 }}>
                 <Pressable
                     onPress={() => navigation.navigate('profileInfo')}
-                    onLayout={({nativeEvent}) =>
+                    onLayout={({ nativeEvent }) =>
                         setProfileBarHeight(nativeEvent.layout.height)
                     }
                     style={{
@@ -301,7 +291,7 @@ const Profile = () => {
                                 return (
                                     <PropertyCard
                                         onPress={() =>
-                                            navigation.navigate('propertyInfo', {propertyId: i.id})
+                                            navigation.navigate('propertyInfo', { propertyId: i.id })
                                         }
                                         images={
                                             i.property_photos[0] && i.property_photos[0].photos
@@ -322,7 +312,7 @@ const Profile = () => {
                                         onInterestedPeoplePress={() => interestedPeopleHandle(i.id)}
                                         ShowCloseButton={true}
                                         showInterestedPeopleButton={true}
-                                        style={{marginBottom: 20}}
+                                        style={{ marginBottom: 20 }}
                                     />
                                 );
                             })
@@ -443,8 +433,8 @@ const Profile = () => {
                         </View>
                     </View>
                 </BottomSheet>
-                <TebNavigation onLayout={i => setTebNavigation(i.layout.height)}/>
-                <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
+                <TebNavigation onLayout={i => setTebNavigation(i.layout.height)} />
+                <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
 
             </View>
         </SafeAreaView>

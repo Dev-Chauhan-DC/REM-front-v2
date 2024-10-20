@@ -1,19 +1,20 @@
-import {View, Text, Pressable, Image} from 'react-native'
-import React, {useEffect, useState} from 'react'
+import { View, Text, Pressable, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import theme from '../theme'
 import Heart from '../assets/svgs/Heart'
 import ActiveHeart from '../assets/svgs/ActiveHeart'
 import DeleteIcon from '../assets/svgs/DeleteIcon'
 import EditIcon from '../assets/svgs/EditIcon'
 import CheckIcon from '../assets/svgs/CheckIcon'
+import { truncateText } from '../utilities/halperFunctions/string'
 
 const PropertyCard = ({
-                          style, isLikeActive,
-                          onPress, showCompare, ShowCloseButton, showEditButton,
-                          ShowLikeButton, showInterestedPeopleButton,
-                          onInterestedPeoplePress, price, bad, bath, hall, kitchen, sqft, address, listedBy,
-                          days, onPressDelete, images, onHeartClick, onComparePress, compareArray, propertyId
-                      }) => {
+    style, isLikeActive,
+    onPress, showCompare, ShowCloseButton, showEditButton,
+    ShowLikeButton, showInterestedPeopleButton,
+    onInterestedPeoplePress, price, bad, bath, hall, kitchen, sqft, address, listedBy,
+    days, onPressDelete, images, onHeartClick, onComparePress, compareArray, propertyId
+}) => {
     const [isCompare, setIsCompare] = useState(false)
 
 
@@ -44,7 +45,7 @@ const PropertyCard = ({
                 }}
             >
                 <Image
-                    source={images ? {uri: images} : require("../assets/images/house.jpg")}
+                    source={images ? { uri: images } : require("../assets/images/house.jpg")}
                     style={{
                         height: 250,
                         width: "100%",
@@ -253,7 +254,7 @@ const PropertyCard = ({
                         color: theme.color.gray400,
                         fontFamily: theme.font.medium
                     }}
-                >{address ? address : "No Address"}</Text>
+                >{address ? truncateText(address, 100, 'center') : ""}</Text>
                 <Text
                     style={{
                         fontSize: 12,
@@ -319,7 +320,7 @@ const PropertyCard = ({
                                     width: 14,
                                     height: 14,
                                     fill: theme.color.black
-                                }}/>
+                                }} />
                         </Pressable>
                         :
                         <></>
@@ -344,7 +345,7 @@ const PropertyCard = ({
                                     width: 14,
                                     height: 14,
                                     fill: theme.color.black
-                                }}/>
+                                }} />
                             <Text
                                 style={{
                                     color: theme.color.black,
@@ -386,7 +387,7 @@ const PropertyCard = ({
                                             width: 14,
                                             height: 14,
                                             fill: theme.color.black
-                                        }}/>
+                                        }} />
                             }
 
                         </Pressable>
